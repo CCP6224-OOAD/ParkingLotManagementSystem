@@ -1,0 +1,6 @@
+.github
+build
+dist
+temp
+
+parking_lot.db

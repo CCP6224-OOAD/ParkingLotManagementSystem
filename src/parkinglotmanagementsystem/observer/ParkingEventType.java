@@ -1,0 +1,16 @@
+package parkinglotmanagementsystem.observer;
+
+/**
+ * Enumeration for types of parking events
+ * Used by Observer pattern to notify listeners
+ */
+public enum ParkingEventType {
+    VEHICLE_ENTERED,        // Vehicle parked in a spot
+    VEHICLE_EXITED,         // Vehicle left the parking lot
+    FINE_GENERATED,         // Fine was created for a vehicle
+    FINE_PAID,              // Fine was marked as paid
+    PAYMENT_PROCESSED,      // Payment transaction completed
+    REVENUE_UPDATED,        // Total revenue changed
+    SPOT_STATUS_CHANGED,    // Parking spot became available/occupied
+    OCCUPANCY_CHANGED       // Overall occupancy rate changed
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ParkingLotManagementSystem" default="build-and-run" basedir=".">
+    
+    <!-- Project Properties -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="main.class" value="parkinglotmanagementsystem.Main"/>
+    
+    <!-- Classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <!-- Clean Target -->
+    <target name="clean" description="Delete build and dist directories">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <echo message="Clean completed."/>
+    </target>
+    
+    <!-- Init Target -->
+    <target name="init" description="Create build and dist directories">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <echo message="Directories initialized."/>
+    </target>
+    
+    <!-- Compile Target -->
+    <target name="compile" depends="init" description="Compile Java source files">
+        <javac srcdir="${src.dir}" 
+               destdir="${build.dir}" 
+               classpathref="classpath"
+               includeantruntime="false"
+               debug="true"
+               debuglevel="lines,vars,source">
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+        <echo message="Compilation completed."/>
+    </target>
+    
+    <!-- Run Target (formerly run-gui) -->
+    <target name="run" depends="compile" description="Run the application in GUI mode">
+        <java classname="${main.class}" fork="true">
+            <arg value="--gui"/>
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement path="${build.dir}"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <!-- JAR Target -->
+    <target name="jar" depends="compile" description="Create executable JAR file">
+        <jar destfile="${dist.dir}/ParkingLotSystem.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="sqlite-jdbc-3.45.0.0.jar"/>
+            </manifest>
+        </jar>
+        <copy file="${lib.dir}/sqlite-jdbc-3.45.0.0.jar" todir="${dist.dir}"/>
+        <echo message="JAR file created: ${dist.dir}/ParkingLotSystem.jar"/>
+    </target>
+    
+    <!-- Clean Build Target -->
+    <target name="clean-build" depends="clean,jar" description="Clean and build JAR">
+        <echo message="Clean build completed."/>
+    </target>
+    
+    <!-- Main Target: Build and Run in one step -->
+    <target name="build-and-run" depends="clean,compile,run" 
+            description="Clean, compile, and run the application in one step">
+        <echo message="Build and run completed successfully."/>
+    </target>
+    
+</project>
