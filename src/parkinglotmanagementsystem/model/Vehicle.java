@@ -1,13 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package parkinglotmanagementsystem.model;
 
-/**
- *
- * @author 媛
- */
-public class Vehicle {
-    
+public abstract class Vehicle {
+
+  protected String plateNumber;
+  protected VehicleType vehicleType;
+
+  public Vehicle(String plateNumber, VehicleType vehicleType) {
+    this.plateNumber = plateNumber;
+    this.vehicleType = vehicleType;
+  }
+
+  public abstract boolean canParkIn(SpotType spotType);
+
+  public abstract double getParkingRate(ParkingSpot spot);
+
+  // Getters and Setters
+
+  public String getPlateNumber() {
+    return plateNumber;
+  }
+
+  public VehicleType getVehicleType() {
+    return vehicleType;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Vehicle[Plate=%s, Type=%s]", plateNumber, vehicleType);
+  }
 }

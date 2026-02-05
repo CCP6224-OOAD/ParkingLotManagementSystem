@@ -1,13 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package parkinglotmanagementsystem.model;
 
-/**
- *
- * @author 媛
- */
-public class VehicleType {
-    
+public enum VehicleType {
+  MOTORCYCLE, // Can park in COMPACT only
+  CAR, // Can park in COMPACT or REGULAR
+  SUV, // Can park in REGULAR only
+  HANDICAPPED // Can park in any spot, gets discounted rate
 }

@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 public class AdminController {
-    
+
     private SystemConfigDAO configDAO;
     private FineManager fineManager;
     private ParkingService parkingService;
     private TicketService ticketService;
     private PaymentService paymentService;
     private ReservationService reservationService;
-    
+
     public AdminController(FineManager fineManager, PaymentService paymentService,
-                          ReservationService reservationService) {
+            ReservationService reservationService) {
         this.configDAO = new SystemConfigDAO();
         this.fineManager = fineManager;
         this.parkingService = new ParkingService();
@@ -26,41 +26,41 @@ public class AdminController {
         this.paymentService = paymentService;
         this.reservationService = reservationService;
     }
-    
+
     public boolean changeFineScheme(FineScheme newScheme) {
         // Update system configuration
         boolean configUpdated = configDAO.setFineScheme(newScheme);
-        
+
         if (!configUpdated) {
             System.err.println("Failed to update fine scheme in database");
             return false;
         }
-        
+
         // Update FineManager strategy
         fineManager.setFineStrategy(newScheme);
-        
+
         System.out.println("=== FINE SCHEME CHANGED ===");
         System.out.println("New Scheme: " + newScheme);
         System.out.println("Effective: FUTURE ENTRIES ONLY");
         System.out.println("Existing parked vehicles retain their original scheme");
-        
+
         return true;
     }
-    
+
     public FineScheme getCurrentFineScheme() {
         return configDAO.getCurrentFineScheme();
     }
-    
+
     public Map<String, Object> getOccupancyStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         ParkingLot parkingLot = parkingService.getParkingLot();
-        
+
         stats.put("totalSpots", parkingLot.getTotalSpots());
         stats.put("occupiedSpots", parkingLot.getTotalOccupied());
         stats.put("availableSpots", parkingLot.getTotalSpots() - parkingLot.getTotalOccupied());
         stats.put("globalOccupancyRate", parkingLot.getGlobalOccupancyRate());
-        
+
         // Floor-by-floor breakdown
         Map<Integer, Map<String, Object>> floorStats = new HashMap<>();
         for (Floor floor : parkingLot.getAllFloors()) {
@@ -72,82 +72,82 @@ public class AdminController {
             floorStats.put(floor.getFloorNumber(), floorData);
         }
         stats.put("floorStats", floorStats);
-        
+
         return stats;
     }
-    
+
     public Map<String, Object> getRevenueStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         double totalRevenue = paymentService.getTotalRevenue();
         double parkingRevenue = paymentService.getTotalParkingRevenue();
         double fineRevenue = paymentService.getTotalFineRevenue();
         int paymentCount = paymentService.getPaymentCount();
-        
+
         stats.put("totalRevenue", totalRevenue);
         stats.put("parkingRevenue", parkingRevenue);
         stats.put("fineRevenue", fineRevenue);
         stats.put("paymentCount", paymentCount);
         stats.put("averageTransaction", paymentCount > 0 ? totalRevenue / paymentCount : 0.0);
-        
+
         return stats;
     }
-    
+
     public Map<String, Object> getFineStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         List<Fine> unpaidFines = fineManager.getAllUnpaidFines();
         double totalUnpaid = unpaidFines.stream()
-            .mapToDouble(Fine::getFineAmount)
-            .sum();
-        
+                .mapToDouble(Fine::getFineAmount)
+                .sum();
+
         stats.put("unpaidFineCount", unpaidFines.size());
         stats.put("totalUnpaidAmount", totalUnpaid);
         stats.put("unpaidFines", unpaidFines);
-        
+
         return stats;
     }
-    
+
     public List<Ticket> getCurrentlyParkedVehicles() {
         return ticketService.getAllParkedVehicles();
     }
-    
+
     public List<Fine> getAllUnpaidFines() {
         return fineManager.getAllUnpaidFines();
     }
-    
+
     public Reservation createReservation(String spotId) {
         return reservationService.createReservation(spotId);
     }
-    
+
     public boolean cancelReservation(int reservationId) {
         return reservationService.cancelReservation(reservationId);
     }
-    
+
     public List<Reservation> getActiveReservations() {
         return reservationService.getAllActiveReservations();
     }
-    
+
     public Map<String, Object> getSystemStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         // Occupancy
         stats.putAll(getOccupancyStats());
-        
+
         // Revenue
         Map<String, Object> revenueStats = getRevenueStats();
         stats.put("revenue", revenueStats);
-        
+
         // Fines
         Map<String, Object> fineStats = getFineStats();
         stats.put("fines", fineStats);
-        
+
         // Current state
         stats.put("currentlyParked", ticketService.getParkedVehicleCount());
         stats.put("totalTicketsIssued", ticketService.getTotalTicketCount());
         stats.put("activeReservations", reservationService.getActiveReservationCount());
         stats.put("currentFineScheme", getCurrentFineScheme());
-        
+
         return stats;
     }
 }

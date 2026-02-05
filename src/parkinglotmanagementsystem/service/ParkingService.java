@@ -4,7 +4,6 @@ import parkinglotmanagementsystem.dao.ParkingSpotDAO;
 import parkinglotmanagementsystem.model.*;
 import parkinglotmanagementsystem.util.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ParkingService {

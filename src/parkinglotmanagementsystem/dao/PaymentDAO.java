@@ -9,28 +9,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Data Access Object for Payment
- * Handles all database operations for payments
- */
 public class PaymentDAO {
-    
+
     private Connection connection;
-    
+
     public PaymentDAO() {
         this.connection = DatabaseManager.getInstance().getConnection();
     }
-    
-    /**
-     * Inserts a new payment into the database
-     */
+
     public boolean insertPayment(Payment payment) {
         String sql = """
-            INSERT INTO payments 
-            (ticket_id, parking_fee, fine_amount, total_amount, payment_method, payment_time)
-            VALUES (?, ?, ?, ?, ?, ?);
-        """;
-        
+                    INSERT INTO payments
+                    (ticket_id, parking_fee, fine_amount, total_amount, payment_method, payment_time)
+                    VALUES (?, ?, ?, ?, ?, ?);
+                """;
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, payment.getTicketId());
             pstmt.setDouble(2, payment.getParkingFee());
@@ -38,15 +31,15 @@ public class PaymentDAO {
             pstmt.setDouble(4, payment.getTotalAmount());
             pstmt.setString(5, payment.getPaymentMethod().name());
             pstmt.setString(6, TimeUtil.formatForDatabase(payment.getPaymentTime()));
-            
+
             pstmt.executeUpdate();
-            
+
             // Get generated payment ID
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 payment.setPaymentId(rs.getInt(1));
             }
-            
+
             return true;
         } catch (SQLException e) {
             System.err.println("Failed to insert payment for ticket: " + payment.getTicketId());
@@ -54,17 +47,14 @@ public class PaymentDAO {
             return false;
         }
     }
-    
-    /**
-     * Gets a payment by ticket ID
-     */
+
     public Payment getPaymentByTicket(String ticketId) {
         String sql = "SELECT * FROM payments WHERE ticket_id = ?;";
-        
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, ticketId);
             ResultSet rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 return extractPaymentFromResultSet(rs);
             }
@@ -72,21 +62,18 @@ public class PaymentDAO {
             System.err.println("Failed to get payment for ticket: " + ticketId);
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
-    /**
-     * Gets all payments
-     */
+
     public List<Payment> getAllPayments() {
         String sql = "SELECT * FROM payments ORDER BY payment_time DESC;";
-        
+
         List<Payment> payments = new ArrayList<>();
-        
+
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 payments.add(extractPaymentFromResultSet(rs));
             }
@@ -94,19 +81,16 @@ public class PaymentDAO {
             System.err.println("Failed to get all payments");
             e.printStackTrace();
         }
-        
+
         return payments;
     }
-    
-    /**
-     * Gets total parking fee revenue
-     */
+
     public double getTotalParkingRevenue() {
         String sql = "SELECT SUM(parking_fee) FROM payments;";
-        
+
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             if (rs.next()) {
                 return rs.getDouble(1);
             }
@@ -114,19 +98,16 @@ public class PaymentDAO {
             System.err.println("Failed to get total parking revenue");
             e.printStackTrace();
         }
-        
+
         return 0.0;
     }
-    
-    /**
-     * Gets total fine revenue (from payments, not fines table)
-     */
+
     public double getTotalFineRevenueFromPayments() {
         String sql = "SELECT SUM(fine_amount) FROM payments;";
-        
+
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             if (rs.next()) {
                 return rs.getDouble(1);
             }
@@ -134,19 +115,16 @@ public class PaymentDAO {
             System.err.println("Failed to get total fine revenue from payments");
             e.printStackTrace();
         }
-        
+
         return 0.0;
     }
-    
-    /**
-     * Gets total revenue (parking fees + fines)
-     */
+
     public double getTotalRevenue() {
         String sql = "SELECT SUM(total_amount) FROM payments;";
-        
+
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             if (rs.next()) {
                 return rs.getDouble(1);
             }
@@ -154,19 +132,16 @@ public class PaymentDAO {
             System.err.println("Failed to get total revenue");
             e.printStackTrace();
         }
-        
+
         return 0.0;
     }
-    
-    /**
-     * Gets count of total payments
-     */
+
     public int getTotalPaymentCount() {
         String sql = "SELECT COUNT(*) FROM payments;";
-        
+
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -174,13 +149,10 @@ public class PaymentDAO {
             System.err.println("Failed to get payment count");
             e.printStackTrace();
         }
-        
+
         return 0;
     }
-    
-    /**
-     * Extracts a Payment object from ResultSet
-     */
+
     private Payment extractPaymentFromResultSet(ResultSet rs) throws SQLException {
         int paymentId = rs.getInt("payment_id");
         String ticketId = rs.getString("ticket_id");
@@ -189,8 +161,8 @@ public class PaymentDAO {
         double totalAmount = rs.getDouble("total_amount");
         PaymentMethod paymentMethod = PaymentMethod.valueOf(rs.getString("payment_method"));
         LocalDateTime paymentTime = TimeUtil.parseFromDatabase(rs.getString("payment_time"));
-        
-        return new Payment(paymentId, ticketId, parkingFee, fineAmount, 
-                          totalAmount, paymentMethod, paymentTime);
+
+        return new Payment(paymentId, ticketId, parkingFee, fineAmount,
+                totalAmount, paymentMethod, paymentTime);
     }
 }

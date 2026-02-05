@@ -7,13 +7,6 @@ import parkinglotmanagementsystem.util.TimeUtil;
 import java.util.List;
 import java.util.Map;
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * Controller for generating various reports
- * Handles occupancy, revenue, fine, and parking reports
- */
 public class ReportController {
 
     private AdminController adminController;
@@ -24,9 +17,6 @@ public class ReportController {
         this.ticketService = new TicketService();
     }
 
-    /**
-     * Generates occupancy report
-     */
     public String generateOccupancyReport() {
         Map<String, Object> stats = adminController.getOccupancyStats();
 
@@ -64,9 +54,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    /**
-     * Generates revenue report
-     */
     public String generateRevenueReport() {
         Map<String, Object> revenueStats = adminController.getRevenueStats();
 
@@ -88,9 +75,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    /**
-     * Generates fine report
-     */
     public String generateFineReport() {
         Map<String, Object> fineStats = adminController.getFineStats();
 
@@ -129,9 +113,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    /**
-     * Generates currently parked vehicles report
-     */
     public String generateCurrentlyParkedReport() {
         List<Ticket> parkedVehicles = adminController.getCurrentlyParkedVehicles();
 
@@ -165,9 +146,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    /**
-     * Generates reservation report
-     */
     public String generateReservationReport() {
         List<Reservation> activeReservations = adminController.getActiveReservations();
 
@@ -201,9 +179,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    /**
-     * Generates comprehensive system summary report
-     */
     public String generateSystemSummary() {
         Map<String, Object> systemStats = adminController.getSystemStats();
 

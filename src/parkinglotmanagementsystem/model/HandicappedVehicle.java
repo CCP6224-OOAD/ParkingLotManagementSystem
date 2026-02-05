@@ -1,13 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package parkinglotmanagementsystem.model;
 
-/**
- *
- * @author 媛
- */
-public class HandicappedVehicle {
-    
+public class HandicappedVehicle extends Vehicle {
+
+  public HandicappedVehicle(String plateNumber) {
+    super(plateNumber, VehicleType.HANDICAPPED);
+  }
+
+  @Override
+  public boolean canParkIn(SpotType spotType) {
+    return true;
+  }
+
+  @Override
+  public double getParkingRate(ParkingSpot spot) {
+    if (spot.getSpotType() == SpotType.HANDICAPPED) {
+      return 0.0; // FREE in handicapped spots
+    } else {
+      return 2.0; // RM 2/hour in other spots
+    }
+  }
 }

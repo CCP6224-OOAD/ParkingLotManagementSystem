@@ -6,10 +6,6 @@ import parkinglotmanagementsystem.ui.MainFrame;
 
 import javax.swing.*;
 
-/**
- * Main entry point for Parking Lot Management System
- * Supports both GUI mode and Console testing mode
- */
 public class Main {
 
     public static void main(String[] args) {

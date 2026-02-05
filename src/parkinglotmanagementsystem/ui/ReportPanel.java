@@ -4,9 +4,6 @@ import parkinglotmanagementsystem.controller.ReportController;
 import parkinglotmanagementsystem.observer.ParkingEventListener;
 import parkinglotmanagementsystem.observer.ParkingEventType;
 
-import javax.swing.*;
-import java.awt.*;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -20,10 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-/**
- * Report panel with Observer pattern for auto-refresh
- * Displays various system reports
- */
 public class ReportPanel extends JPanel implements ParkingEventListener {
 
     private ReportController reportController;

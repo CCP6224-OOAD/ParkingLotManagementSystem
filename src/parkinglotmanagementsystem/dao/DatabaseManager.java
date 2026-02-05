@@ -8,7 +8,6 @@ import java.sql.Statement;
 
 /**
  * Singleton class for managing database connections and initialization
- * Creates all necessary tables on first run
  */
 public class DatabaseManager {
 
@@ -33,10 +32,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Gets the singleton instance of DatabaseManager
-     * @return DatabaseManager instance
-     */
     public static synchronized DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -44,10 +39,6 @@ public class DatabaseManager {
         return instance;
     }
 
-    /**
-     * Gets the active database connection
-     * @return Connection object
-     */
     public Connection getConnection() {
         try {
             // Check if connection is closed and reconnect if necessary
@@ -61,9 +52,6 @@ public class DatabaseManager {
         return connection;
     }
 
-    /**
-     * Initializes database by creating all necessary tables
-     */
     private void initializeDatabase() {
         try (Statement stmt = connection.createStatement()) {
 
@@ -142,17 +130,17 @@ public class DatabaseManager {
             stmt.execute(createPaymentsTable);
 
             // // Table 6: reservations
-            // String createReservationsTable = """
-            //     CREATE TABLE IF NOT EXISTS reservations (
-            //         reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            //         spot_id TEXT NOT NULL,
-            //         plate_number TEXT,
-            //         reserved_at TEXT NOT NULL,
-            //         is_active INTEGER DEFAULT 1 CHECK(is_active IN (0, 1)),
-            //         FOREIGN KEY(spot_id) REFERENCES parking_spots(spot_id)
-            //     );
-            // """;
-            // stmt.execute(createReservationsTable);
+            String createReservationsTable = """
+                        CREATE TABLE IF NOT EXISTS reservations (
+                            reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            spot_id TEXT NOT NULL,
+                            plate_number TEXT,
+                            reserved_at TEXT NOT NULL,
+                            is_active INTEGER DEFAULT 1 CHECK(is_active IN (0, 1)),
+                            FOREIGN KEY(spot_id) REFERENCES parking_spots(spot_id)
+                        );
+                    """;
+            stmt.execute(createReservationsTable);
 
             // Table 7: system_config
             String createConfigTable = """
@@ -178,9 +166,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Closes the database connection
-     */
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -193,10 +178,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Resets the database by dropping all tables (USE WITH CAUTION)
-     * This is useful for testing purposes
-     */
     public void resetDatabase() {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DROP TABLE IF EXISTS payments;");

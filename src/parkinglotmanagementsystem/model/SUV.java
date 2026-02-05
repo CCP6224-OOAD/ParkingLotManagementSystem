@@ -1,13 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package parkinglotmanagementsystem.model;
 
-/**
- *
- * @author 媛
- */
-public class SUV {
-    
+public class SUV extends Vehicle {
+
+  public SUV(String plateNumber) {
+    super(plateNumber, VehicleType.SUV);
+  }
+
+  @Override
+  public boolean canParkIn(SpotType spotType) {
+    return spotType == SpotType.REGULAR;
+  }
+
+  @Override
+  public double getParkingRate(ParkingSpot spot) {
+    return spot.getHourlyRate();
+  }
 }
