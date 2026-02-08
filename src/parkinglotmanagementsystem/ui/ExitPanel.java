@@ -56,7 +56,6 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     panel.add(plateField);
 
     JLabel formatLabel = new JLabel("(Format: ABC1234)");
-    formatLabel.setFont(formatLabel.getFont().deriveFont(Font.ITALIC));
     panel.add(formatLabel);
 
     calculateBillButton = new JButton("Calculate Bill");
@@ -206,10 +205,9 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
   // Observer Pattern Implementation
   @Override
   public void onParkingEvent(ParkingEventType eventType, Object eventData) {
-    // Auto-clear form after successful payment
     SwingUtilities.invokeLater(() -> {
       if (eventType == ParkingEventType.PAYMENT_PROCESSED) {
-        // Form is already cleared in processPayment success handler
+        clearForm();
       }
     });
   }

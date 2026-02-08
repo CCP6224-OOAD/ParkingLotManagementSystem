@@ -28,11 +28,11 @@ public class ParkingService {
 
         int spotsCreated = 0;
 
+        // populate spot records into database
         for (int floor = 1; floor <= Constants.TOTAL_FLOORS; floor++) {
             for (int row = 1; row <= Constants.ROWS_PER_FLOOR; row++) {
                 int spotNum = 1;
 
-                // Create COMPACT spots
                 for (int i = 0; i < Constants.COMPACT_SPOTS_PER_ROW; i++) {
                     ParkingSpot spot = new ParkingSpot(floor, row, spotNum++, SpotType.COMPACT);
                     if (spotDAO.insertSpot(spot)) {
@@ -40,7 +40,6 @@ public class ParkingService {
                     }
                 }
 
-                // Create REGULAR spots
                 for (int i = 0; i < Constants.REGULAR_SPOTS_PER_ROW; i++) {
                     ParkingSpot spot = new ParkingSpot(floor, row, spotNum++, SpotType.REGULAR);
                     if (spotDAO.insertSpot(spot)) {
@@ -48,7 +47,6 @@ public class ParkingService {
                     }
                 }
 
-                // Create HANDICAPPED spots
                 for (int i = 0; i < Constants.HANDICAPPED_SPOTS_PER_ROW; i++) {
                     ParkingSpot spot = new ParkingSpot(floor, row, spotNum++, SpotType.HANDICAPPED);
                     if (spotDAO.insertSpot(spot)) {
@@ -56,7 +54,6 @@ public class ParkingService {
                     }
                 }
 
-                // Create RESERVED spots
                 for (int i = 0; i < Constants.RESERVED_SPOTS_PER_ROW; i++) {
                     ParkingSpot spot = new ParkingSpot(floor, row, spotNum++, SpotType.RESERVED);
                     if (spotDAO.insertSpot(spot)) {
@@ -123,7 +120,6 @@ public class ParkingService {
         boolean updated = spotDAO.updateSpotStatus(spotId, SpotStatus.AVAILABLE, null);
 
         if (updated) {
-            // Update in-memory object
             spot.release();
             System.out.println("Spot released: " + spotId);
         }

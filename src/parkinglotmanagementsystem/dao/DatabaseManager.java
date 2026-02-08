@@ -16,12 +16,14 @@ public class DatabaseManager {
 
     private DatabaseManager() {
         try {
-            // Load SQLite JDBC driver
+            // load SQLite JDBC driver
             Class.forName("org.sqlite.JDBC");
-            // Establish connection
+
+            // establish connection
             connection = DriverManager.getConnection(Constants.DB_URL);
             System.out.println("Database connection established: " + Constants.DB_FILE);
-            // Initialize database schema
+
+            // initialize database schema
             initializeDatabase();
         } catch (ClassNotFoundException e) {
             System.err.println("SQLite JDBC driver not found!");
@@ -32,7 +34,7 @@ public class DatabaseManager {
         }
     }
 
-    public static synchronized DatabaseManager getInstance() {
+    public static DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
         }
@@ -55,10 +57,10 @@ public class DatabaseManager {
     private void initializeDatabase() {
         try (Statement stmt = connection.createStatement()) {
 
-            // Enable foreign key constraints
+            // enable foreign key constraints
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            // Table 1: parking_spots
+            // table 1: parking_spots
             String createSpotsTable = """
                         CREATE TABLE IF NOT EXISTS parking_spots (
                             spot_id TEXT PRIMARY KEY,
@@ -73,7 +75,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createSpotsTable);
 
-            // Table 2: vehicles
+            // table 2: vehicles
             String createVehiclesTable = """
                         CREATE TABLE IF NOT EXISTS vehicles (
                             plate_number TEXT PRIMARY KEY,
@@ -82,7 +84,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createVehiclesTable);
 
-            // Table 3: tickets
+            // table 3: tickets
             String createTicketsTable = """
                         CREATE TABLE IF NOT EXISTS tickets (
                             ticket_id TEXT PRIMARY KEY,
@@ -97,7 +99,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createTicketsTable);
 
-            // Table 4: fines
+            // table 4: fines
             String createFinesTable = """
                         CREATE TABLE IF NOT EXISTS fines (
                             fine_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,7 +116,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createFinesTable);
 
-            // Table 5: payments
+            // table 5: payments
             String createPaymentsTable = """
                         CREATE TABLE IF NOT EXISTS payments (
                             payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -129,7 +131,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createPaymentsTable);
 
-            // // Table 6: reservations
+            // // table 6: reservations
             String createReservationsTable = """
                         CREATE TABLE IF NOT EXISTS reservations (
                             reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -142,7 +144,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createReservationsTable);
 
-            // Table 7: system_config
+            // table 7: system_config
             String createConfigTable = """
                         CREATE TABLE IF NOT EXISTS system_config (
                             config_key TEXT PRIMARY KEY,
@@ -183,11 +185,12 @@ public class DatabaseManager {
             stmt.execute("DROP TABLE IF EXISTS payments;");
             stmt.execute("DROP TABLE IF EXISTS fines;");
             stmt.execute("DROP TABLE IF EXISTS tickets;");
-            // stmt.execute("DROP TABLE IF EXISTS reservations;");
+            stmt.execute("DROP TABLE IF EXISTS reservations;");
             stmt.execute("DROP TABLE IF EXISTS vehicles;");
             stmt.execute("DROP TABLE IF EXISTS parking_spots;");
             stmt.execute("DROP TABLE IF EXISTS system_config;");
             System.out.println("Database reset completed.");
+
             // Reinitialize
             initializeDatabase();
         } catch (SQLException e) {

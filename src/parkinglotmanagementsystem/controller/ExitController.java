@@ -7,6 +7,7 @@ import parkinglotmanagementsystem.util.TimeUtil;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExitController {
@@ -153,7 +154,7 @@ public class ExitController {
         hoursParked);
   }
 
-  public java.util.List<Ticket> getParkedVehicles() {
+  public List<Ticket> getParkedVehicles() {
     return ticketService.getAllParkedVehicles();
   }
 }

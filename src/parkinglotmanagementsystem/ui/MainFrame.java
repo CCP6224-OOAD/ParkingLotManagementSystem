@@ -14,13 +14,13 @@ public class MainFrame extends JFrame {
     private AdminPanel adminPanel;
     private ReportPanel reportPanel;
 
-    // Controllers
+    // controllers
     private EntryController entryController;
     private ExitController exitController;
     private AdminController adminController;
     private ReportController reportController;
 
-    // Services (for observer pattern)
+    // services (for observer pattern)
     private FineManager fineManager;
     private PaymentService paymentService;
 
@@ -43,45 +43,36 @@ public class MainFrame extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
 
-        // Create menu bar
+        // create menu bar
         createMenuBar();
 
-        // Create tabbed pane
+        // create tabbed pane
         tabbedPane = new JTabbedPane();
 
-        // Create panels with correct constructors
         entryPanel = new EntryPanel(entryController);
         exitPanel = new ExitPanel(exitController);
         adminPanel = new AdminPanel(adminController, reportController);
         reportPanel = new ReportPanel(reportController);
 
-        // Register observers AFTER panel creation
+        // register observers AFTER panel creation
         fineManager.addListener(adminPanel);
         fineManager.addListener(reportPanel);
         paymentService.addListener(adminPanel);
         paymentService.addListener(reportPanel);
         paymentService.addListener(exitPanel);
 
-        // Add panels to tabbed pane
         tabbedPane.addTab("Vehicle Entry", entryPanel);
         tabbedPane.addTab("Vehicle Exit", exitPanel);
         tabbedPane.addTab("Admin", adminPanel);
         tabbedPane.addTab("Reports", reportPanel);
 
-        // Add tabbed pane to frame
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Add status bar
-        JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel statusLabel = new JLabel("Parking Lot Management System - Ready");
-        statusBar.add(statusLabel);
-        add(statusBar, BorderLayout.SOUTH);
     }
 
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // File menu
         JMenu fileMenu = new JMenu("File");
 
         JMenuItem refreshItem = new JMenuItem("Refresh All");
@@ -105,15 +96,6 @@ public class MainFrame extends JFrame {
 
         menuBar.add(fileMenu);
 
-        // Help menu
-        JMenu helpMenu = new JMenu("Help");
-
-        JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(e -> showAboutDialog());
-        helpMenu.add(aboutItem);
-
-        menuBar.add(helpMenu);
-
         setJMenuBar(menuBar);
     }
 
@@ -125,26 +107,4 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(this, "All panels refreshed successfully!");
     }
 
-    private void showAboutDialog() {
-        String message = """
-                Parking Lot Management System
-                Version 1.0
-
-                Developed for CCP6224
-                Object-Oriented Analysis and Design
-
-                Features:
-                - Multi-level parking management
-                - Fine calculation strategies
-                - Payment processing
-                - Comprehensive reporting
-                - Observer pattern for real-time updates
-                """;
-
-        JOptionPane.showMessageDialog(
-                this,
-                message,
-                "About",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
 }

@@ -61,7 +61,7 @@ public class AdminController {
         stats.put("availableSpots", parkingLot.getTotalSpots() - parkingLot.getTotalOccupied());
         stats.put("globalOccupancyRate", parkingLot.getGlobalOccupancyRate());
 
-        // Floor-by-floor breakdown
+        // optional: floor-by-floor breakdown
         Map<Integer, Map<String, Object>> floorStats = new HashMap<>();
         for (Floor floor : parkingLot.getAllFloors()) {
             Map<String, Object> floorData = new HashMap<>();

@@ -4,6 +4,7 @@ import parkinglotmanagementsystem.model.*;
 import parkinglotmanagementsystem.util.TimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +39,24 @@ public class BillingService {
         // Calculate parking fee
         double parkingFee = calculateParkingFee(vehicle, spot, hoursParked);
 
-        // Detect and generate new fines for this session
-        List<Fine> newFines = fineManager.detectAndGenerateFines(ticket, spot, hoursParked);
-        double newFineAmount = newFines.stream()
-                .mapToDouble(Fine::getFineAmount)
-                .sum();
-
         // Get existing unpaid fines
         List<Fine> unpaidFines = fineManager.getUnpaidFines(ticket.getPlateNumber());
         double existingFineAmount = unpaidFines.stream()
                 .mapToDouble(Fine::getFineAmount)
                 .sum();
+
+        List<Fine> newFines = new ArrayList<>();
+        double newFineAmount = 0.0;
+
+        boolean isTicketAlreadyFined = unpaidFines.stream()
+                .anyMatch(fine -> fine.getTicketId().equals(ticket.getTicketId()));
+
+        if (!isTicketAlreadyFined) {
+            newFines = fineManager.detectAndGenerateFines(ticket, spot, hoursParked);
+            newFineAmount = newFines.stream()
+                    .mapToDouble(Fine::getFineAmount)
+                    .sum();
+        }
 
         // Calculate total
         double totalFineAmount = newFineAmount + existingFineAmount;
@@ -110,7 +118,7 @@ public class BillingService {
         @SuppressWarnings("unchecked")
         List<Fine> newFines = (List<Fine>) bill.get("newFines");
         if (!newFines.isEmpty()) {
-            sb.append("NEW FINES:%n");
+            sb.append("NEW FINES\n");
             for (Fine fine : newFines) {
                 sb.append(String.format("  - %s: RM %.2f (Scheme: %s)%n",
                         fine.getFineType(), fine.getFineAmount(), fine.getFineScheme()));
@@ -123,7 +131,7 @@ public class BillingService {
         @SuppressWarnings("unchecked")
         List<Fine> unpaidFines = (List<Fine>) bill.get("unpaidFines");
         if (!unpaidFines.isEmpty()) {
-            sb.append("UNPAID FINES FROM PREVIOUS VISITS:%n");
+            sb.append("UNPAID FINES FROM PREVIOUS VISITS\n");
             for (Fine fine : unpaidFines) {
                 sb.append(String.format("  - %s: RM %.2f (From: %s)%n",
                         fine.getFineType(), fine.getFineAmount(),

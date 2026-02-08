@@ -13,17 +13,14 @@ public class VehicleService {
   }
 
   public Vehicle registerVehicle(String plateNumber, VehicleType vehicleType) {
-    // Validate and normalize plate number
     String normalizedPlate = PlateValidator.validateAndNormalize(plateNumber);
 
-    // Check if vehicle already exists
     Vehicle existingVehicle = vehicleDAO.findVehicleByPlate(normalizedPlate);
     if (existingVehicle != null) {
       System.out.println("Vehicle already registered: " + normalizedPlate);
       return existingVehicle;
     }
 
-    // Create appropriate vehicle subclass
     Vehicle vehicle = createVehicle(normalizedPlate, vehicleType);
 
     if (vehicleDAO.insertVehicle(vehicle)) {

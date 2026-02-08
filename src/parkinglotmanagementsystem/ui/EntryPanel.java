@@ -32,15 +32,15 @@ public class EntryPanel extends JPanel {
     setLayout(new BorderLayout(10, 10));
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    // Top panel - Input form
+    // top panel - Input form
     JPanel inputPanel = createInputPanel();
     add(inputPanel, BorderLayout.NORTH);
 
-    // Center panel - Available spots table
+    // center panel - Available spots table
     JPanel tablePanel = createTablePanel();
     add(tablePanel, BorderLayout.CENTER);
 
-    // Bottom panel - Result area
+    // bottom panel - Result area
     JPanel resultPanel = createResultPanel();
     add(resultPanel, BorderLayout.SOUTH);
   }
@@ -64,7 +64,6 @@ public class EntryPanel extends JPanel {
 
     gbc.gridx = 2;
     JLabel formatLabel = new JLabel("(Format: ABC1234)");
-    formatLabel.setFont(formatLabel.getFont().deriveFont(Font.ITALIC));
     panel.add(formatLabel, gbc);
 
     // Vehicle type
@@ -141,11 +140,11 @@ public class EntryPanel extends JPanel {
   private void searchAvailableSpots() {
     VehicleType selectedType = (VehicleType) vehicleTypeCombo.getSelectedItem();
 
-    // Clear table
+    // clear table
     spotsTableModel.setRowCount(0);
     parkButton.setEnabled(false);
 
-    // Search for spots
+    // search for spots
     List<ParkingSpot> spots = entryController.findSuitableSpots(selectedType);
 
     if (spots.isEmpty()) {
@@ -157,14 +156,13 @@ public class EntryPanel extends JPanel {
       return;
     }
 
-    // Populate table
     for (ParkingSpot spot : spots) {
       spotsTableModel.addRow(new Object[] {
           spot.getSpotId(),
           spot.getFloorNumber(),
           spot.getSpotType(),
           String.format("%.2f", spot.getHourlyRate()),
-          "Available"
+          spot.getStatus()
       });
     }
 
@@ -173,7 +171,7 @@ public class EntryPanel extends JPanel {
   }
 
   private void parkVehicle() {
-    // Validate plate
+    // validate plate
     String plate = plateField.getText().trim();
     if (!PlateValidator.isValid(plate)) {
       JOptionPane.showMessageDialog(this,
@@ -183,7 +181,6 @@ public class EntryPanel extends JPanel {
       return;
     }
 
-    // Get selected spot
     int selectedRow = spotsTable.getSelectedRow();
     if (selectedRow == -1) {
       JOptionPane.showMessageDialog(this,
@@ -196,11 +193,11 @@ public class EntryPanel extends JPanel {
     String spotId = (String) spotsTableModel.getValueAt(selectedRow, 0);
     VehicleType vehicleType = (VehicleType) vehicleTypeCombo.getSelectedItem();
 
-    // Park vehicle
+    // park vehicle
     Ticket ticket = entryController.parkVehicle(plate, vehicleType, spotId);
 
     if (ticket != null) {
-      // Success
+      // success
       String message = String.format("""
           === VEHICLE PARKED SUCCESSFULLY ===
 
@@ -227,10 +224,9 @@ public class EntryPanel extends JPanel {
           "Success",
           JOptionPane.INFORMATION_MESSAGE);
 
-      // Clear form and refresh
       clearForm();
     } else {
-      // Failed
+      // failed
       resultArea.setText("Failed to park vehicle. Please check console for details.");
       JOptionPane.showMessageDialog(this,
           "Failed to park vehicle!\nPlease check if the vehicle is already parked or spot is unavailable.",

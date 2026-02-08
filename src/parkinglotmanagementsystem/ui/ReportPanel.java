@@ -176,7 +176,6 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
     // Observer Pattern Implementation
     @Override
     public void onParkingEvent(ParkingEventType eventType, Object eventData) {
-        // Auto-refresh on relevant events
         SwingUtilities.invokeLater(() -> {
             switch (eventType) {
                 case VEHICLE_ENTERED:
@@ -185,7 +184,6 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
                 case FINE_PAID:
                 case PAYMENT_PROCESSED:
                 case REVENUE_UPDATED:
-                    // Auto-refresh if a report is currently displayed
                     String currentText = reportArea.getText();
                     if (!currentText.isEmpty() &&
                             !currentText.equals("Select a report type and click 'Generate Report' to view.")) {
