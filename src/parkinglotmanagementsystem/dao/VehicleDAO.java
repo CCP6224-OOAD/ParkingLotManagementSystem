@@ -91,7 +91,7 @@ public class VehicleDAO {
   private Vehicle extractVehicleFromResultSet(ResultSet rs) throws SQLException {
     String plateNumber = rs.getString("plate_number");
     VehicleType vehicleType = VehicleType.valueOf(rs.getString("vehicle_type"));
-    double balance = rs.getDouble(rs.getString("balance"));
+    double balance = rs.getDouble("balance");
 
     // Create appropriate subclass based on vehicle type
     switch (vehicleType) {

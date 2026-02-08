@@ -103,7 +103,7 @@ public class EntryPanel extends JPanel {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createTitledBorder("Available Parking Spots"));
 
-    String[] columns = { "Spot ID", "Floor", "Type", "Rate (RM/hr)", "Status" };
+    String[] columns = { "Spot ID", "Floor", "Type", "Rate (RM/hr)" };
     spotsTableModel = new DefaultTableModel(columns, 0) {
       @Override
       public boolean isCellEditable(int row, int column) {
@@ -157,17 +157,23 @@ public class EntryPanel extends JPanel {
     }
 
     for (ParkingSpot spot : spots) {
+      double hourlyRate = spot.getHourlyRate();
+
+      if (selectedType == VehicleType.HANDICAPPED) {
+        hourlyRate = spot.getSpotType() == SpotType.HANDICAPPED ? 0.0 : 2.0;
+      }
+
       spotsTableModel.addRow(new Object[] {
           spot.getSpotId(),
           spot.getFloorNumber(),
           spot.getSpotType(),
-          String.format("%.2f", spot.getHourlyRate()),
-          spot.getStatus()
+          String.format("%.2f", hourlyRate),
       });
     }
 
     resultArea.setText(String.format("Found %d available spots for %s\nSelect a spot and click 'Park Vehicle'",
         spots.size(), selectedType));
+
   }
 
   private void parkVehicle() {
@@ -192,6 +198,20 @@ public class EntryPanel extends JPanel {
 
     String spotId = (String) spotsTableModel.getValueAt(selectedRow, 0);
     VehicleType vehicleType = (VehicleType) vehicleTypeCombo.getSelectedItem();
+    SpotType spotType = (SpotType) spotsTableModel.getValueAt(selectedRow, 2);
+
+    System.out.println(spotsTableModel.getValueAt(selectedRow, 2));
+
+    if (spotType == SpotType.RESERVED) {
+      int confirm = JOptionPane.showConfirmDialog(this,
+          String.format("Parking at %s spot will be fined. Do you want to continue?", spotType),
+          "Confirm Parking At Reserved Spot",
+          JOptionPane.YES_NO_OPTION);
+
+      if (confirm == JOptionPane.NO_OPTION) {
+        return;
+      }
+    }
 
     // park vehicle
     Ticket ticket = entryController.parkVehicle(plate, vehicleType, spotId);

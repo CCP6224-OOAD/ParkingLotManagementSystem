@@ -12,13 +12,13 @@ public class EntryController {
   private ParkingService parkingService;
   private VehicleService vehicleService;
   private TicketService ticketService;
-  private ReservationService reservationService;
+  // private ReservationService reservationService;
 
-  public EntryController(ReservationService reservationService, FineManager fineManager) {
+  public EntryController(FineManager fineManager) {
     this.parkingService = new ParkingService();
     this.vehicleService = new VehicleService();
     this.ticketService = new TicketService();
-    this.reservationService = reservationService;
+    // this.reservationService = reservationService;
     // fineManager parameter kept for future use but not stored
   }
 
@@ -35,8 +35,7 @@ public class EntryController {
    * 4. Validate spot availability and compatibility
    * 5. Check reservation (if RESERVED spot)
    * 6. Allocate spot
-   * 7. Use reservation (if applicable)
-   * 8. Create parking ticket
+   * 7. Create parking ticket
    */
   public Ticket parkVehicle(String plateNumber, VehicleType vehicleType, String spotId) {
     try {
@@ -81,7 +80,7 @@ public class EntryController {
       }
 
       // Check vehicle-spot compatibility
-      if (!vehicle.canParkIn(spot.getSpotType())) {
+      if (!vehicle.canParkIn(spot.getSpotType()) && spot.getSpotType() != SpotType.RESERVED) {
         System.err.println("Vehicle cannot park in this spot type. " +
             "Vehicle: " + vehicleType + ", Spot: " + spot.getSpotType());
         return null;
@@ -89,14 +88,10 @@ public class EntryController {
 
       // Step 5: Check reservation for RESERVED spots
       if (spot.getSpotType() == SpotType.RESERVED) {
-        if (!reservationService.hasReservation(spotId, normalizedPlate)) {
-          System.err.println("Reserved spot requires a reservation!");
-          System.err.println("Parking denied. A fine will be generated if you proceed illegally.");
+        // System.err.println("Reserved spot requires a reservation!");
+        // System.err.println("Parking denied. A fine will be generated if you proceed illegally.");
+        System.out.println("A Misuse of Reserved Spot Fine will be generated later");
 
-          // Generate fine for reserved spot misuse
-          // (This would be done at exit time in real scenario)
-          return null;
-        }
       }
 
       // Step 6: Allocate spot
@@ -106,12 +101,7 @@ public class EntryController {
         return null;
       }
 
-      // Step 7: Use reservation if spot is RESERVED
-      if (spot.getSpotType() == SpotType.RESERVED) {
-        reservationService.useReservation(spotId, normalizedPlate);
-      }
-
-      // Step 8: Create ticket
+      // Step 7: Create ticket
       Ticket ticket = ticketService.createTicket(normalizedPlate, spotId);
       if (ticket == null) {
         // Rollback spot allocation

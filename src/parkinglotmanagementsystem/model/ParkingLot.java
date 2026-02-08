@@ -46,11 +46,11 @@ public class ParkingLot {
     private boolean canVehicleParkInSpot(VehicleType vehicleType, SpotType spotType) {
         switch (vehicleType) {
             case MOTORCYCLE:
-                return spotType == SpotType.COMPACT;
+                return spotType == SpotType.RESERVED || spotType == SpotType.COMPACT;
             case CAR:
-                return spotType == SpotType.COMPACT || spotType == SpotType.REGULAR;
+                return spotType == SpotType.RESERVED || spotType == SpotType.COMPACT || spotType == SpotType.REGULAR;
             case SUV:
-                return spotType == SpotType.REGULAR;
+                return spotType == SpotType.RESERVED || spotType == SpotType.REGULAR;
             case HANDICAPPED:
                 return true; // Can park in any spot
             default:
