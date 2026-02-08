@@ -4,12 +4,9 @@ import parkinglotmanagementsystem.model.*;
 import parkinglotmanagementsystem.util.TimeUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class BillingService {
 
@@ -135,6 +132,8 @@ public class BillingService {
 
         sb.append("-".repeat(50)).append("\n");
         sb.append(String.format("TOTAL DUE: RM %.2f%n", bill.get("totalDue")));
+        sb.append("-".repeat(50)).append("\n");
+        sb.append(String.format("REMAINING BALANCE: RM %.2f%n", ((Vehicle) bill.get("vehicle")).getBalance()));
         sb.append("-".repeat(50)).append("\n");
         sb.append(String.format("Fine Scheme (This Session): %s%n", bill.get("fineScheme")));
         sb.append("=".repeat(50)).append("\n");

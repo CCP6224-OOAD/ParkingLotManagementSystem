@@ -6,6 +6,7 @@ import parkinglotmanagementsystem.util.PlateValidator;
 import parkinglotmanagementsystem.util.TimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class ExitController {
     }
   }
 
-  public Payment processExit(String plateNumber, PaymentMethod paymentMethod) {
+  public Payment processExit(String plateNumber, PaymentMethod paymentMethod, double paymentAmount) {
     try {
       // Validate plate number
       String normalizedPlate = PlateValidator.validateAndNormalize(plateNumber);
@@ -83,23 +84,49 @@ public class ExitController {
       }
 
       Ticket ticket = (Ticket) bill.get("ticket");
-      LocalDateTime exitTime = (LocalDateTime) bill.get("exitTime");
+      Vehicle vehicle = (Vehicle) bill.get("vehicle");
       double parkingFee = (Double) bill.get("parkingFee");
-      double totalFineAmount = (Double) bill.get("totalFineAmount");
-      long hoursParked = (Long) bill.get("hoursParked");
+      @SuppressWarnings("unchecked")
+      List<Fine> fines = (List<Fine>) bill.get("unpaidFines");
+
+      double balance = vehicle.getBalance();
+      double paidParkingFee = 0.0;
+      if (balance < 0) {
+        paidParkingFee = Math.min(-balance, paymentAmount);
+      }
+      paymentAmount += balance;
+
+      if (paymentAmount > 0) {
+        paidParkingFee += Math.min(paymentAmount, parkingFee);
+      }
+      paymentAmount -= parkingFee;
+
+      double fineAmount = 0.0;
+      List<Integer> paidFineIds = new ArrayList<>();
+      for (Fine fine : fines) {
+        if (paymentAmount < fine.getFineAmount()) {
+          break;
+        }
+        paidFineIds.add(fine.getFineId());
+        fineAmount += fine.getFineAmount();
+        paymentAmount -= fine.getFineAmount();
+      }
 
       // Process payment
       Payment payment = paymentService.processPayment(
           ticket.getTicketId(),
-          normalizedPlate,
-          parkingFee,
-          totalFineAmount,
+          paidFineIds,
+          paidParkingFee,
+          fineAmount,
           paymentMethod);
 
       if (payment == null) {
         System.err.println("Payment processing failed");
         return null;
       }
+
+      LocalDateTime exitTime = (LocalDateTime) bill.get("exitTime");
+      long hoursParked = (Long) bill.get("hoursParked");
 
       // Close ticket
       boolean ticketClosed = ticketService.closeTicket(ticket.getTicketId(), exitTime);
@@ -112,8 +139,15 @@ public class ExitController {
       // Release spot
       boolean spotReleased = parkingService.releaseSpot(ticket.getSpotId());
       if (!spotReleased) {
-        System.err.println("Failed to release spot: " + ticket.getSpotId());
         // Payment and ticket already processed
+        System.err.println("Failed to release spot: " + ticket.getSpotId());
+      }
+
+      // Update balance
+      vehicle.setBalance(paymentAmount);
+      boolean vehicleUpdated = vehicleService.updateVehicle(vehicle);
+      if (!vehicleUpdated) {
+        System.err.println("Failed to update vehicle: " + vehicle.getPlateNumber());
       }
 
       System.out.println("=== VEHICLE EXIT SUCCESSFUL ===");
@@ -140,18 +174,19 @@ public class ExitController {
   }
 
   public String generateReceipt(Payment payment, Map<String, Object> billDetails) {
-    Ticket ticket = (Ticket) billDetails.get("ticket");
-    Vehicle vehicle = (Vehicle) billDetails.get("vehicle");
+    Vehicle oldVehicle = (Vehicle) billDetails.get("vehicle");
+    Vehicle newVehicle = vehicleService.getVehicle(oldVehicle.getPlateNumber());
     LocalDateTime entryTime = (LocalDateTime) billDetails.get("entryTime");
     LocalDateTime exitTime = (LocalDateTime) billDetails.get("exitTime");
     Long hoursParked = (Long) billDetails.get("hoursParked");
 
     return paymentService.generateReceipt(
         payment,
-        vehicle.getPlateNumber(),
+        newVehicle.getPlateNumber(),
         entryTime,
         exitTime,
-        hoursParked);
+        hoursParked,
+        newVehicle.getBalance());
   }
 
   public List<Ticket> getParkedVehicles() {

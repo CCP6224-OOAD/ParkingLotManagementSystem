@@ -70,7 +70,7 @@ public class FineDAO {
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            System.err.println("Failed to insert fine for plate: " + fine.getPlateNumber());
+            System.err.println("Failed to update fine for plate: " + fine.getPlateNumber());
             e.printStackTrace();
             return false;
         }
@@ -102,7 +102,7 @@ public class FineDAO {
         String sql = """
                     SELECT * FROM fines
                     WHERE plate_number = ? AND is_paid = 0
-                    ORDER BY created_at DESC;
+                    ORDER BY created_at ASC;
                 """;
 
         List<Fine> fines = new ArrayList<>();

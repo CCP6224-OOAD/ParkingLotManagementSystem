@@ -33,7 +33,26 @@ public class VehicleDAO {
     }
   }
 
-  // todo: add update
+  public boolean updateVehicle(Vehicle vehicle) {
+    String sql = """
+        UPDATE vehicles
+        SET vehicle_type = ?, balance = ?
+        WHERE plate_number = ?;
+        """;
+
+    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+      pstmt.setString(1, vehicle.getVehicleType().name());
+      pstmt.setDouble(2, vehicle.getBalance());
+      pstmt.setString(3, vehicle.getPlateNumber());
+
+      int rowsAffected = pstmt.executeUpdate();
+      return rowsAffected > 0;
+    } catch (SQLException e) {
+      System.err.println("Failed to update vehicle for plate: " + vehicle.getPlateNumber());
+      e.printStackTrace();
+      return false;
+    }
+  }
 
   public Vehicle findVehicleByPlate(String plateNumber) {
     String sql = "SELECT * FROM vehicles WHERE plate_number = ?;";

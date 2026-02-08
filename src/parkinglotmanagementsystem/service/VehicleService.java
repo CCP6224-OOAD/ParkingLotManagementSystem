@@ -37,6 +37,10 @@ public class VehicleService {
     return vehicleDAO.findVehicleByPlate(normalizedPlate);
   }
 
+  public boolean updateVehicle(Vehicle vehicle) {
+    return vehicleDAO.updateVehicle(vehicle);
+  }
+
   public boolean isVehicleRegistered(String plateNumber) {
     try {
       String normalizedPlate = PlateValidator.validateAndNormalize(plateNumber);

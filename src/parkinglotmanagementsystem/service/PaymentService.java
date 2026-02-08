@@ -23,10 +23,9 @@ public class PaymentService {
         this.listeners = new ArrayList<>();
     }
 
-    public Payment processPayment(String ticketId, String plateNumber,
+    public Payment processPayment(String ticketId, List<Integer> fineIds,
             double parkingFee, double fineAmount,
             PaymentMethod paymentMethod) {
-        // Create payment record
         Payment payment = new Payment(
                 ticketId,
                 parkingFee,
@@ -34,15 +33,13 @@ public class PaymentService {
                 paymentMethod,
                 TimeUtil.now());
 
-        // Save payment to database
         if (!paymentDAO.insertPayment(payment)) {
             System.err.println("Failed to save payment");
             return null;
         }
 
-        // Mark all unpaid fines for this plate as paid
-        if (fineAmount > 0) {
-            fineManager.markAllFinesPaid(plateNumber);
+        if (!fineIds.isEmpty()) {
+            fineManager.markFinesPaid(fineIds);
         }
 
         System.out.println("Payment processed successfully: " + payment);
@@ -56,7 +53,7 @@ public class PaymentService {
 
     public String generateReceipt(Payment payment, String plateNumber,
             LocalDateTime entryTime, LocalDateTime exitTime,
-            long hoursParked) {
+            long hoursParked, double balance) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("=".repeat(50)).append("\n");
@@ -78,6 +75,8 @@ public class PaymentService {
         sb.append(String.format("Fine Amount: RM %.2f%n", payment.getFineAmount()));
         sb.append("-".repeat(50)).append("\n");
         sb.append(String.format("Total Paid: RM %.2f%n", payment.getTotalAmount()));
+        sb.append("-".repeat(50)).append("\n");
+        sb.append(String.format("New Balance: RM %.2f%n", balance));
         sb.append("-".repeat(50)).append("\n");
 
         sb.append(String.format("Payment Method: %s%n", payment.getPaymentMethod()));

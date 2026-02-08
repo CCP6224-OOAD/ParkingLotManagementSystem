@@ -21,12 +21,14 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
   private JTextArea billArea;
   private JRadioButton cashRadio;
   private JRadioButton cardRadio;
+  private JSpinner paymentAmountSpinner;
 
   private Map<String, Object> currentBill;
 
   public ExitPanel(ExitController exitController) {
     this.exitController = exitController;
     initializeUI();
+    clearForm();
   }
 
   private void initializeUI() {
@@ -87,6 +89,16 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createTitledBorder("Payment"));
 
+    // Payment Amount
+    JPanel paymentAmountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    paymentAmountPanel.add(new JLabel("Payment Amount:"));
+
+    SpinnerNumberModel model = new SpinnerNumberModel(0.0, 0.0, 100000.0, 1.0);
+    paymentAmountSpinner = new JSpinner(model);
+    paymentAmountPanel.add(paymentAmountSpinner);
+
+    panel.add(paymentAmountPanel, BorderLayout.WEST);
+
     // Payment method selection
     JPanel methodPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     methodPanel.add(new JLabel("Payment Method:"));
@@ -106,7 +118,7 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     processPaymentButton.setEnabled(false);
     methodPanel.add(processPaymentButton);
 
-    panel.add(methodPanel, BorderLayout.CENTER);
+    panel.add(methodPanel);
 
     return panel;
   }
@@ -154,9 +166,11 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     PaymentMethod paymentMethod = cashRadio.isSelected() ? PaymentMethod.CASH : PaymentMethod.CARD;
 
     // Confirm payment
-    double totalDue = (Double) currentBill.get("totalDue");
+    double paymentAmount = (Double) paymentAmountSpinner.getValue();
     int confirm = JOptionPane.showConfirmDialog(this,
-        String.format("Confirm payment of RM %.2f via %s?", totalDue, paymentMethod),
+        String.format(
+            "Confirm payment of RM %.2f via %s?\nNote: The parking fee will be paid first, followed by oldest fine to latest fine.",
+            paymentAmount, paymentMethod),
         "Confirm Payment",
         JOptionPane.YES_NO_OPTION);
 
@@ -166,12 +180,11 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
 
     // Process payment
     String plate = plateField.getText().trim();
-    Payment payment = exitController.processExit(plate, paymentMethod);
+    Payment payment = exitController.processExit(plate, paymentMethod, paymentAmount);
 
     if (payment != null) {
       // Success - generate receipt
       String receipt = exitController.generateReceipt(payment, currentBill);
-      billArea.setText(receipt);
 
       JOptionPane.showMessageDialog(this,
           String.format("Payment successful!\nTotal Paid: RM %.2f\nThank you!",
@@ -181,6 +194,9 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
 
       // Clear form
       clearForm();
+
+      // Generate the exit receipt
+      billArea.setText(receipt);
     } else {
       billArea.setText("Payment processing failed. Please try again.");
       JOptionPane.showMessageDialog(this,
@@ -196,6 +212,7 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     currentBill = null;
     processPaymentButton.setEnabled(false);
     cashRadio.setSelected(true);
+    paymentAmountSpinner.setValue(0.0);
   }
 
   public void refresh() {
