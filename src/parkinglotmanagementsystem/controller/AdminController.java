@@ -15,16 +15,14 @@ public class AdminController {
     private ParkingService parkingService;
     private TicketService ticketService;
     private PaymentService paymentService;
-    private ReservationService reservationService;
+    // private ReservationService reservationService;
 
-    public AdminController(FineManager fineManager, PaymentService paymentService,
-            ReservationService reservationService) {
+    public AdminController(FineManager fineManager, PaymentService paymentService) {
         this.configDAO = new SystemConfigDAO();
         this.fineManager = fineManager;
         this.parkingService = new ParkingService();
         this.ticketService = new TicketService();
         this.paymentService = paymentService;
-        this.reservationService = reservationService;
     }
 
     public boolean changeFineScheme(FineScheme newScheme) {
@@ -116,17 +114,17 @@ public class AdminController {
         return fineManager.getAllUnpaidFines();
     }
 
-    public Reservation createReservation(String spotId) {
-        return reservationService.createReservation(spotId);
-    }
+    // public Reservation createReservation(String spotId) {
+    //     return reservationService.createReservation(spotId);
+    // }
 
-    public boolean cancelReservation(int reservationId) {
-        return reservationService.cancelReservation(reservationId);
-    }
+    // public boolean cancelReservation(int reservationId) {
+    //     return reservationService.cancelReservation(reservationId);
+    // }
 
-    public List<Reservation> getActiveReservations() {
-        return reservationService.getAllActiveReservations();
-    }
+    // public List<Reservation> getActiveReservations() {
+    //     return reservationService.getAllActiveReservations();
+    // }
 
     public Map<String, Object> getSystemStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -145,7 +143,7 @@ public class AdminController {
         // Current state
         stats.put("currentlyParked", ticketService.getParkedVehicleCount());
         stats.put("totalTicketsIssued", ticketService.getTotalTicketCount());
-        stats.put("activeReservations", reservationService.getActiveReservationCount());
+        // stats.put("activeReservations", reservationService.getActiveReservationCount());
         stats.put("currentFineScheme", getCurrentFineScheme());
 
         return stats;

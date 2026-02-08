@@ -146,38 +146,38 @@ public class ReportController {
         return sb.toString();
     }
 
-    public String generateReservationReport() {
-        List<Reservation> activeReservations = adminController.getActiveReservations();
+    // public String generateReservationReport() {
+    //     List<Reservation> activeReservations = adminController.getActiveReservations();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("=".repeat(60)).append("\n");
-        sb.append("ACTIVE RESERVATIONS REPORT\n");
-        sb.append("=".repeat(60)).append("\n\n");
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("=".repeat(60)).append("\n");
+    //     sb.append("ACTIVE RESERVATIONS REPORT\n");
+    //     sb.append("=".repeat(60)).append("\n\n");
 
-        sb.append(String.format("Total Active Reservations: %d%n", activeReservations.size()));
-        sb.append("\n");
+    //     sb.append(String.format("Total Active Reservations: %d%n", activeReservations.size()));
+    //     sb.append("\n");
 
-        if (activeReservations.isEmpty()) {
-            sb.append("No active reservations.\n");
-        } else {
-            sb.append("-".repeat(60)).append("\n");
-            sb.append(String.format("%-10s %-12s %-15s %-20s%n",
-                    "Res ID", "Spot", "Plate", "Reserved At"));
-            sb.append("-".repeat(60)).append("\n");
+    //     if (activeReservations.isEmpty()) {
+    //         sb.append("No active reservations.\n");
+    //     } else {
+    //         sb.append("-".repeat(60)).append("\n");
+    //         sb.append(String.format("%-10s %-12s %-15s %-20s%n",
+    //                 "Res ID", "Spot", "Plate", "Reserved At"));
+    //         sb.append("-".repeat(60)).append("\n");
 
-            for (Reservation reservation : activeReservations) {
-                sb.append(String.format("%-10d %-12s %-15s %-20s%n",
-                        reservation.getReservationId(),
-                        reservation.getSpotId(),
-                        reservation.getPlateNumber() != null ? reservation.getPlateNumber() : "Unassigned",
-                        TimeUtil.formatForDisplay(reservation.getReservedAt())));
-            }
-        }
+    //         for (Reservation reservation : activeReservations) {
+    //             sb.append(String.format("%-10d %-12s %-15s %-20s%n",
+    //                     reservation.getReservationId(),
+    //                     reservation.getSpotId(),
+    //                     reservation.getPlateNumber() != null ? reservation.getPlateNumber() : "Unassigned",
+    //                     TimeUtil.formatForDisplay(reservation.getReservedAt())));
+    //         }
+    //     }
 
-        sb.append("=".repeat(60)).append("\n");
+    //     sb.append("=".repeat(60)).append("\n");
 
-        return sb.toString();
-    }
+    //     return sb.toString();
+    // }
 
     public String generateSystemSummary() {
         Map<String, Object> systemStats = adminController.getSystemStats();

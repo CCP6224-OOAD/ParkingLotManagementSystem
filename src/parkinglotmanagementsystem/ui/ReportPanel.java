@@ -62,7 +62,6 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
                 "Revenue Report",
                 "Fine Report",
                 "Currently Parked Vehicles",
-                "Reservations Report"
         };
 
         reportTypeCombo = new JComboBox<>(reportTypes);
@@ -125,9 +124,9 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
                 case "Currently Parked Vehicles":
                     report = reportController.generateCurrentlyParkedReport();
                     break;
-                case "Reservations Report":
-                    report = reportController.generateReservationReport();
-                    break;
+                // case "Reservations Report":
+                //     report = reportController.generateReservationReport();
+                //     break;
                 default:
                     report = "Unknown report type";
             }

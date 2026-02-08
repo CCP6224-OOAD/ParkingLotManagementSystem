@@ -30,12 +30,11 @@ public class Main {
 
             FineManager fineManager = new FineManager();
             PaymentService paymentService = new PaymentService(fineManager);
-            ReservationService reservationService = new ReservationService(parkingService);
 
             // Initialize controllers
-            AdminController adminController = new AdminController(fineManager, paymentService, reservationService);
+            AdminController adminController = new AdminController(fineManager, paymentService);
             ReportController reportController = new ReportController(adminController);
-            EntryController entryController = new EntryController(reservationService, fineManager);
+            EntryController entryController = new EntryController(fineManager);
             ExitController exitController = new ExitController(fineManager, paymentService);
 
             // Create and show main frame
