@@ -79,7 +79,8 @@ public class DatabaseManager {
             String createVehiclesTable = """
                         CREATE TABLE IF NOT EXISTS vehicles (
                             plate_number TEXT PRIMARY KEY,
-                            vehicle_type TEXT NOT NULL CHECK(vehicle_type IN ('MOTORCYCLE', 'CAR', 'SUV', 'HANDICAPPED'))
+                            vehicle_type TEXT NOT NULL CHECK(vehicle_type IN ('MOTORCYCLE', 'CAR', 'SUV', 'HANDICAPPED')),
+                            balance REAL NOT NULL DEFAULT 0
                         );
                     """;
             stmt.execute(createVehiclesTable);

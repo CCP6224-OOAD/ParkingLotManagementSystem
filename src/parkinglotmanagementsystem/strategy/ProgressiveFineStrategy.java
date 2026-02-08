@@ -29,9 +29,6 @@ public class ProgressiveFineStrategy implements FineCalculationStrategy {
         }
     }
 
-    /**
-     * Calculates progressive overstay fine based on hours
-     */
     private double calculateOverstayFine(long hoursParked) {
         if (hoursParked <= 24) {
             return 0.0; // No fine for first 24 hours

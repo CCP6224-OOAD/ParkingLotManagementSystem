@@ -6,6 +6,10 @@ public class HandicappedVehicle extends Vehicle {
     super(plateNumber, VehicleType.HANDICAPPED);
   }
 
+  public HandicappedVehicle(String plateNumber, double balance) {
+    super(plateNumber, VehicleType.HANDICAPPED, balance);
+  }
+
   @Override
   public boolean canParkIn(SpotType spotType) {
     return true;

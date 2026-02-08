@@ -33,6 +33,8 @@ public class VehicleDAO {
     }
   }
 
+  // todo: add update
+
   public Vehicle findVehicleByPlate(String plateNumber) {
     String sql = "SELECT * FROM vehicles WHERE plate_number = ?;";
 
@@ -89,17 +91,18 @@ public class VehicleDAO {
   private Vehicle extractVehicleFromResultSet(ResultSet rs) throws SQLException {
     String plateNumber = rs.getString("plate_number");
     VehicleType vehicleType = VehicleType.valueOf(rs.getString("vehicle_type"));
+    double balance = rs.getDouble(rs.getString("balance"));
 
     // Create appropriate subclass based on vehicle type
     switch (vehicleType) {
       case MOTORCYCLE:
-        return new Motorcycle(plateNumber);
+        return new Motorcycle(plateNumber, balance);
       case CAR:
-        return new Car(plateNumber);
+        return new Car(plateNumber, balance);
       case SUV:
-        return new SUV(plateNumber);
+        return new SUV(plateNumber, balance);
       case HANDICAPPED:
-        return new HandicappedVehicle(plateNumber);
+        return new HandicappedVehicle(plateNumber, balance);
       default:
         throw new IllegalArgumentException("Unknown vehicle type: " + vehicleType);
     }

@@ -6,6 +6,10 @@ public class Car extends Vehicle {
     super(plateNumber, VehicleType.CAR);
   }
 
+  public Car(String plateNumber, double balance) {
+    super(plateNumber, VehicleType.CAR, balance);
+  }
+
   @Override
   public boolean canParkIn(SpotType spotType) {
     return spotType == SpotType.COMPACT || spotType == SpotType.REGULAR;
