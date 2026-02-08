@@ -50,6 +50,54 @@ public class FineDAO {
         }
     }
 
+    public boolean updateFine(Fine fine) {
+        String sql = """
+                    UPDATE fines
+                    SET plate_number = ? , ticket_id = ?, fine_type = ?, fine_amount = ?, fine_scheme = ?, is_paid = ?, created_at = ?
+                    WHERE fine_id = ?;
+                """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, fine.getPlateNumber());
+            pstmt.setString(2, fine.getTicketId());
+            pstmt.setString(3, fine.getFineType().name());
+            pstmt.setDouble(4, fine.getFineAmount());
+            pstmt.setString(5, fine.getFineScheme().name());
+            pstmt.setInt(6, fine.isPaid() ? 1 : 0);
+            pstmt.setString(7, TimeUtil.formatForDatabase(fine.getCreatedAt()));
+            pstmt.setInt(8, fine.getFineId());
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Failed to insert fine for plate: " + fine.getPlateNumber());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Fine getFineByTicketIdAndFineType(String ticket, FineType fineType) {
+        String sql = """
+                    SELECT * FROM fines
+                    WHERE ticket_id = ? AND fine_type = ?;
+                """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, ticket);
+            pstmt.setString(2, fineType.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return extractFineFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to get unpaid fines for: " + ticket);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public List<Fine> getUnpaidFines(String plateNumber) {
         String sql = """
                     SELECT * FROM fines

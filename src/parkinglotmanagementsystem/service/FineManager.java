@@ -57,7 +57,7 @@ public class FineManager {
     public List<Fine> detectAndGenerateFines(Ticket ticket, ParkingSpot spot, long hoursParked) {
         List<Fine> generatedFines = new ArrayList<>();
 
-        // Check for overstay (> 24 hours)
+        // overstay
         if (hoursParked > Constants.OVERSTAY_THRESHOLD_HOURS) {
             Fine overstayFine = generateFine(ticket, FineType.OVERSTAY, hoursParked);
             if (overstayFine != null) {
@@ -65,16 +65,12 @@ public class FineManager {
             }
         }
 
-        // Check for reserved spot misuse
-        // (This will be enhanced in Phase 5 with reservation checking)
+        // reserved spot misuse
         if (spot.getSpotType() == SpotType.RESERVED) {
-            // For now, we assume any parking in RESERVED without explicit validation is misuse
-            // In Phase 5, we'll check against reservation records
-            // Commenting out for now to avoid false positives
-            // Fine reservedFine = generateFine(ticket, FineType.RESERVED_MISUSE, hoursParked);
-            // if (reservedFine != null) {
-            //     generatedFines.add(reservedFine);
-            // }
+            Fine overstayFine = generateFine(ticket, FineType.RESERVED_MISUSE, hoursParked);
+            if (overstayFine != null) {
+                generatedFines.add(overstayFine);
+            }
         }
 
         return generatedFines;
@@ -98,25 +94,43 @@ public class FineManager {
             return null; // No fine to generate
         }
 
-        // Create fine object
-        Fine fine = new Fine(
-                ticket.getPlateNumber(),
-                ticket.getTicketId(),
-                fineType,
-                fineAmount,
-                ticketScheme,
-                TimeUtil.now());
+        Fine existingFine = fineDAO.getFineByTicketIdAndFineType(ticket.getTicketId(), fineType);
 
-        if (fineDAO.insertFine(fine)) {
-            System.out.println("Fine generated: " + fine);
+        if (existingFine == null) {
+            // Create fine object
+            Fine fine = new Fine(
+                    ticket.getPlateNumber(),
+                    ticket.getTicketId(),
+                    fineType,
+                    fineAmount,
+                    ticketScheme,
+                    TimeUtil.now());
 
-            // Notify observers
-            notifyListeners(ParkingEventType.FINE_GENERATED, fine);
+            if (fineDAO.insertFine(fine)) {
+                System.out.println("Fine generated: " + fine);
 
-            return fine;
+                // Notify observers
+                notifyListeners(ParkingEventType.FINE_GENERATED, fine);
+
+                return fine;
+            } else {
+                System.err.println("Failed to save fine to database");
+                return null;
+            }
         } else {
-            System.err.println("Failed to save fine to database");
-            return null;
+            existingFine.setFineAmount(fineAmount);
+
+            if (fineDAO.updateFine(existingFine)) {
+                System.out.println("Fine updated: " + existingFine);
+
+                // Notify observers
+                notifyListeners(ParkingEventType.FINE_GENERATED, existingFine);
+
+                return existingFine;
+            } else {
+                System.err.println("Failed to update fine to database");
+                return null;
+            }
         }
     }
 

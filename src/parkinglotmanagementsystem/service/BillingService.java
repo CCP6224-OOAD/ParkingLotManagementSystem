@@ -6,8 +6,10 @@ import parkinglotmanagementsystem.util.TimeUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BillingService {
 
@@ -39,27 +41,18 @@ public class BillingService {
         // Calculate parking fee
         double parkingFee = calculateParkingFee(vehicle, spot, hoursParked);
 
-        // Get existing unpaid fines
-        List<Fine> unpaidFines = fineManager.getUnpaidFines(ticket.getPlateNumber());
-        double existingFineAmount = unpaidFines.stream()
+        List<Fine> newFines = fineManager.detectAndGenerateFines(ticket, spot, hoursParked);
+        double newFineAmount = newFines.stream()
                 .mapToDouble(Fine::getFineAmount)
                 .sum();
 
-        List<Fine> newFines = new ArrayList<>();
-        double newFineAmount = 0.0;
-
-        boolean isTicketAlreadyFined = unpaidFines.stream()
-                .anyMatch(fine -> fine.getTicketId().equals(ticket.getTicketId()));
-
-        if (!isTicketAlreadyFined) {
-            newFines = fineManager.detectAndGenerateFines(ticket, spot, hoursParked);
-            newFineAmount = newFines.stream()
-                    .mapToDouble(Fine::getFineAmount)
-                    .sum();
-        }
+        // Get existing unpaid fines
+        List<Fine> unpaidFines = fineManager.getUnpaidFines(ticket.getPlateNumber());
+        double totalFineAmount = unpaidFines.stream()
+                .mapToDouble(Fine::getFineAmount)
+                .sum();
 
         // Calculate total
-        double totalFineAmount = newFineAmount + existingFineAmount;
         double totalDue = parkingFee + totalFineAmount;
 
         // Populate bill details
@@ -74,7 +67,6 @@ public class BillingService {
         bill.put("newFines", newFines);
         bill.put("newFineAmount", newFineAmount);
         bill.put("unpaidFines", unpaidFines);
-        bill.put("existingFineAmount", existingFineAmount);
         bill.put("totalFineAmount", totalFineAmount);
         bill.put("totalDue", totalDue);
         bill.put("fineScheme", ticket.getFineScheme());
@@ -131,13 +123,13 @@ public class BillingService {
         @SuppressWarnings("unchecked")
         List<Fine> unpaidFines = (List<Fine>) bill.get("unpaidFines");
         if (!unpaidFines.isEmpty()) {
-            sb.append("UNPAID FINES FROM PREVIOUS VISITS\n");
+            sb.append("UNPAID FINES\n");
             for (Fine fine : unpaidFines) {
-                sb.append(String.format("  - %s: RM %.2f (From: %s)%n",
+                sb.append(String.format("  - %s: RM %.2f (From: %s, Ticket ID: %s)%n",
                         fine.getFineType(), fine.getFineAmount(),
-                        TimeUtil.formatForDisplay(fine.getCreatedAt())));
+                        TimeUtil.formatForDisplay(fine.getCreatedAt()), fine.getTicketId()));
             }
-            sb.append(String.format("Existing Fine Total: RM %.2f%n", bill.get("existingFineAmount")));
+            sb.append(String.format("Total Fine Amount: RM %.2f%n", bill.get("totalFineAmount")));
             sb.append("\n");
         }
 

@@ -66,6 +66,10 @@ public class Fine {
         return fineAmount;
     }
 
+    public void setFineAmount(double fineAmount) {
+        this.fineAmount = fineAmount;
+    }
+
     public FineScheme getFineScheme() {
         return fineScheme;
     }
