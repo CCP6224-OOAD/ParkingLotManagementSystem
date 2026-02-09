@@ -18,7 +18,7 @@ public class Constants {
     public static final int RESERVED_SPOTS_PER_ROW = 1;
 
     // fine configuration
-    public static final long OVERSTAY_THRESHOLD_HOURS = 0;
+    public static final long OVERSTAY_THRESHOLD_HOURS = 1;
     public static final double FIXED_FINE_AMOUNT = 50.0;
     public static final double HOURLY_FINE_RATE = 20.0;
 

@@ -132,20 +132,7 @@ public class DatabaseManager {
                     """;
             stmt.execute(createPaymentsTable);
 
-            // table 6: reservations
-            // String createReservationsTable = """
-            //             CREATE TABLE IF NOT EXISTS reservations (
-            //                 reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            //                 spot_id TEXT NOT NULL,
-            //                 plate_number TEXT,
-            //                 reserved_at TEXT NOT NULL,
-            //                 is_active INTEGER DEFAULT 1 CHECK(is_active IN (0, 1)),
-            //                 FOREIGN KEY(spot_id) REFERENCES parking_spots(spot_id)
-            //             );
-            //         """;
-            // stmt.execute(createReservationsTable);
-
-            // table 7: system_config
+            // table 6: system_config
             String createConfigTable = """
                         CREATE TABLE IF NOT EXISTS system_config (
                             config_key TEXT PRIMARY KEY,

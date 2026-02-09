@@ -1,7 +1,6 @@
 package parkinglotmanagementsystem.ui;
 
 import parkinglotmanagementsystem.controller.AdminController;
-import parkinglotmanagementsystem.controller.ReportController;
 import parkinglotmanagementsystem.model.*;
 import parkinglotmanagementsystem.observer.ParkingEventListener;
 import parkinglotmanagementsystem.observer.ParkingEventType;
@@ -16,7 +15,6 @@ import java.util.Map;
 public class AdminPanel extends JPanel implements ParkingEventListener {
 
     private AdminController adminController;
-    private ReportController reportController;
 
     // UI Components
     private JComboBox<FineScheme> fineSchemeCombo;
@@ -29,9 +27,8 @@ public class AdminPanel extends JPanel implements ParkingEventListener {
     private JTable unpaidFinesTable;
     private DefaultTableModel finesTableModel;
 
-    public AdminPanel(AdminController adminController, ReportController reportController) {
+    public AdminPanel(AdminController adminController) {
         this.adminController = adminController;
-        this.reportController = reportController;
 
         initializeUI();
         refresh();

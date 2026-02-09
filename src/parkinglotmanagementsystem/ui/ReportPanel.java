@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 public class ReportPanel extends JPanel implements ParkingEventListener {
 
@@ -124,9 +123,6 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
                 case "Currently Parked Vehicles":
                     report = reportController.generateCurrentlyParkedReport();
                     break;
-                // case "Reservations Report":
-                //     report = reportController.generateReservationReport();
-                //     break;
                 default:
                     report = "Unknown report type";
             }

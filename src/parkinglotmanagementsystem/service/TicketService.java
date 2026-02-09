@@ -48,10 +48,6 @@ public class TicketService {
     return ticketDAO.findActiveTicket(plateNumber);
   }
 
-  public Ticket getTicketById(String ticketId) {
-    return ticketDAO.findTicketById(ticketId);
-  }
-
   public boolean closeTicket(String ticketId, LocalDateTime exitTime) {
     // Update exit time in database
     boolean updated = ticketDAO.updateExitTime(ticketId, exitTime);
@@ -67,10 +63,6 @@ public class TicketService {
 
   public boolean closeTicket(String ticketId) {
     return closeTicket(ticketId, TimeUtil.now());
-  }
-
-  public List<Ticket> getTicketHistory(String plateNumber) {
-    return ticketDAO.getTicketsByPlate(plateNumber);
   }
 
   public List<Ticket> getAllParkedVehicles() {
@@ -89,12 +81,4 @@ public class TicketService {
     return ticketDAO.getTotalTicketCount();
   }
 
-  public long calculateDuration(Ticket ticket) {
-    if (ticket.getExitTime() == null) {
-      // Use current time if not exited yet
-      return TimeUtil.calculateDurationHours(ticket.getEntryTime(), TimeUtil.now());
-    } else {
-      return TimeUtil.calculateDurationHours(ticket.getEntryTime(), ticket.getExitTime());
-    }
-  }
 }

@@ -54,7 +54,7 @@ public class MainFrame extends JFrame {
 
         entryPanel = new EntryPanel(entryController);
         exitPanel = new ExitPanel(exitController);
-        adminPanel = new AdminPanel(adminController, reportController);
+        adminPanel = new AdminPanel(adminController);
         parkingLotPanel = new ParkingLotPanel(adminController);
         reportPanel = new ReportPanel(reportController);
 

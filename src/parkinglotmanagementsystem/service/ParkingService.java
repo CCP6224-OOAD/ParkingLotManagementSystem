@@ -84,10 +84,6 @@ public class ParkingService {
         return parkingLot.findAvailableSpots(vehicleType);
     }
 
-    public List<ParkingSpot> getAvailableSpotsByType(SpotType spotType) {
-        return spotDAO.findAvailableSpots(spotType);
-    }
-
     public boolean allocateSpot(String spotId, String plateNumber) {
         ParkingSpot spot = spotDAO.findSpotById(spotId);
 

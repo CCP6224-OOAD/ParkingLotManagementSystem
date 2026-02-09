@@ -50,10 +50,6 @@ public class VehicleService {
     }
   }
 
-  public int getTotalVehicleCount() {
-    return vehicleDAO.getTotalVehicleCount();
-  }
-
   private Vehicle createVehicle(String plateNumber, VehicleType vehicleType) {
     switch (vehicleType) {
       case MOTORCYCLE:

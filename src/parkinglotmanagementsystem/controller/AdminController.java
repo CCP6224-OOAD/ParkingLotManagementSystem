@@ -15,7 +15,6 @@ public class AdminController {
     private ParkingService parkingService;
     private TicketService ticketService;
     private PaymentService paymentService;
-    // private ReservationService reservationService;
 
     public AdminController(ParkingService parkingService, FineManager fineManager, PaymentService paymentService) {
         this.configDAO = new SystemConfigDAO();
@@ -34,7 +33,7 @@ public class AdminController {
             return false;
         }
 
-        // Update FineManager strategy
+        // update FineManager strategy
         fineManager.setFineStrategy(newScheme);
 
         System.out.println("=== FINE SCHEME CHANGED ===");

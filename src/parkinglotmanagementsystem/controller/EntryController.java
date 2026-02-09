@@ -12,14 +12,11 @@ public class EntryController {
   private ParkingService parkingService;
   private VehicleService vehicleService;
   private TicketService ticketService;
-  // private ReservationService reservationService;
 
   public EntryController(ParkingService parkingService, FineManager fineManager) {
     this.parkingService = parkingService;
     this.vehicleService = new VehicleService();
     this.ticketService = new TicketService();
-    // this.reservationService = reservationService;
-    // fineManager parameter kept for future use but not stored
   }
 
   public List<ParkingSpot> findSuitableSpots(VehicleType vehicleType) {
@@ -88,8 +85,6 @@ public class EntryController {
 
       // Step 5: Check reservation for RESERVED spots
       if (spot.getSpotType() == SpotType.RESERVED) {
-        // System.err.println("Reserved spot requires a reservation!");
-        // System.err.println("Parking denied. A fine will be generated if you proceed illegally.");
         System.out.println("A Misuse of Reserved Spot Fine will be generated later");
 
       }
@@ -130,13 +125,5 @@ public class EntryController {
       e.printStackTrace();
       return null;
     }
-  }
-
-  public String getOccupancyInfo() {
-    return parkingService.getOccupancyReport();
-  }
-
-  public int getParkedVehicleCount() {
-    return ticketService.getParkedVehicleCount();
   }
 }

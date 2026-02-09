@@ -191,8 +191,4 @@ public class ExitController {
         hoursParked,
         newVehicle.getBalance());
   }
-
-  public List<Ticket> getParkedVehicles() {
-    return ticketService.getAllParkedVehicles();
-  }
 }

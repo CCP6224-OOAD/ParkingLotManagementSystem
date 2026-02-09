@@ -195,17 +195,43 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
       // Generate the exit receipt
       billArea.setText(receipt);
 
-      JOptionPane.showMessageDialog(this,
-          String.format("Payment successful!\nTotal Paid: RM %.2f\nThank you!",
+      int isPrintReceipt = JOptionPane.showConfirmDialog(this,
+          String.format("Payment successful!\nTotal Paid: RM %.2f\nThank you!\n\nDo you want to print out the receipt?",
               payment.getTotalAmount()),
-          "Payment Successful",
-          JOptionPane.INFORMATION_MESSAGE);
+          "Payment Successful & Print Receipt",
+          JOptionPane.YES_NO_OPTION);
+
+      if (isPrintReceipt == JOptionPane.YES_OPTION) {
+        printReceipt();
+      }
 
     } else {
       billArea.setText("Payment processing failed. Please try again.");
       JOptionPane.showMessageDialog(this,
           "Payment processing failed!\nPlease contact support.",
           "Payment Failed",
+          JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  private void printReceipt() {
+    try {
+      boolean complete = billArea.print();
+      if (complete) {
+        JOptionPane.showMessageDialog(this,
+            "Receipt is printed out!",
+            "Print Success",
+            JOptionPane.INFORMATION_MESSAGE);
+      } else {
+        JOptionPane.showMessageDialog(this,
+            "Printing was cancelled.",
+            "Print Cancelled",
+            JOptionPane.WARNING_MESSAGE);
+      }
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this,
+          "Error printing report: " + e.getMessage(),
+          "Print Error",
           JOptionPane.ERROR_MESSAGE);
     }
   }

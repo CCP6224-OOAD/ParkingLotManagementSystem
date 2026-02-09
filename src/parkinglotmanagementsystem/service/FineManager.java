@@ -138,6 +138,7 @@ public class FineManager {
         return fineDAO.getUnpaidFines(plateNumber);
     }
 
+    // for future use
     public double getTotalUnpaidFineAmount(String plateNumber) {
         return fineDAO.getTotalUnpaidFineAmount(plateNumber);
     }
@@ -150,6 +151,7 @@ public class FineManager {
         return success;
     }
 
+    // for future use
     public boolean markAllFinesPaid(String plateNumber) {
         boolean success = fineDAO.markAllFinesPaidForPlate(plateNumber);
         if (success) {

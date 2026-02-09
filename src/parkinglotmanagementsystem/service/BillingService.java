@@ -16,7 +16,7 @@ public class BillingService {
         this.fineManager = fineManager;
     }
 
-    public double calculateParkingFee(Vehicle vehicle, ParkingSpot spot, long hoursParked) {
+    private double calculateParkingFee(Vehicle vehicle, ParkingSpot spot, long hoursParked) {
         if (vehicle == null || spot == null) {
             return 0.0;
         }

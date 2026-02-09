@@ -1,7 +1,6 @@
 package parkinglotmanagementsystem.controller;
 
 import parkinglotmanagementsystem.model.*;
-import parkinglotmanagementsystem.service.*;
 import parkinglotmanagementsystem.util.TimeUtil;
 
 import java.util.List;
@@ -10,11 +9,9 @@ import java.util.Map;
 public class ReportController {
 
     private AdminController adminController;
-    private TicketService ticketService;
 
     public ReportController(AdminController adminController) {
         this.adminController = adminController;
-        this.ticketService = new TicketService();
     }
 
     public String generateOccupancyReport() {
@@ -146,39 +143,6 @@ public class ReportController {
         return sb.toString();
     }
 
-    // public String generateReservationReport() {
-    //     List<Reservation> activeReservations = adminController.getActiveReservations();
-
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("=".repeat(60)).append("\n");
-    //     sb.append("ACTIVE RESERVATIONS REPORT\n");
-    //     sb.append("=".repeat(60)).append("\n\n");
-
-    //     sb.append(String.format("Total Active Reservations: %d%n", activeReservations.size()));
-    //     sb.append("\n");
-
-    //     if (activeReservations.isEmpty()) {
-    //         sb.append("No active reservations.\n");
-    //     } else {
-    //         sb.append("-".repeat(60)).append("\n");
-    //         sb.append(String.format("%-10s %-12s %-15s %-20s%n",
-    //                 "Res ID", "Spot", "Plate", "Reserved At"));
-    //         sb.append("-".repeat(60)).append("\n");
-
-    //         for (Reservation reservation : activeReservations) {
-    //             sb.append(String.format("%-10d %-12s %-15s %-20s%n",
-    //                     reservation.getReservationId(),
-    //                     reservation.getSpotId(),
-    //                     reservation.getPlateNumber() != null ? reservation.getPlateNumber() : "Unassigned",
-    //                     TimeUtil.formatForDisplay(reservation.getReservedAt())));
-    //         }
-    //     }
-
-    //     sb.append("=".repeat(60)).append("\n");
-
-    //     return sb.toString();
-    // }
-
     public String generateSystemSummary() {
         Map<String, Object> systemStats = adminController.getSystemStats();
 
@@ -213,7 +177,6 @@ public class ReportController {
         sb.append("SYSTEM CONFIGURATION:\n");
         sb.append(String.format("  Current Fine Scheme: %s%n", systemStats.get("currentFineScheme")));
         sb.append(String.format("  Total Tickets Issued: %d%n", systemStats.get("totalTicketsIssued")));
-        sb.append(String.format("  Active Reservations: %d%n", systemStats.get("activeReservations")));
 
         sb.append("=".repeat(60)).append("\n");
 
