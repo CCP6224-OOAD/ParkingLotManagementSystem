@@ -17,10 +17,10 @@ public class AdminController {
     private PaymentService paymentService;
     // private ReservationService reservationService;
 
-    public AdminController(FineManager fineManager, PaymentService paymentService) {
+    public AdminController(ParkingService parkingService, FineManager fineManager, PaymentService paymentService) {
         this.configDAO = new SystemConfigDAO();
         this.fineManager = fineManager;
-        this.parkingService = new ParkingService();
+        this.parkingService = parkingService;
         this.ticketService = new TicketService();
         this.paymentService = paymentService;
     }
@@ -114,18 +114,6 @@ public class AdminController {
         return fineManager.getAllUnpaidFines();
     }
 
-    // public Reservation createReservation(String spotId) {
-    //     return reservationService.createReservation(spotId);
-    // }
-
-    // public boolean cancelReservation(int reservationId) {
-    //     return reservationService.cancelReservation(reservationId);
-    // }
-
-    // public List<Reservation> getActiveReservations() {
-    //     return reservationService.getAllActiveReservations();
-    // }
-
     public Map<String, Object> getSystemStats() {
         Map<String, Object> stats = new HashMap<>();
 
@@ -147,5 +135,13 @@ public class AdminController {
         stats.put("currentFineScheme", getCurrentFineScheme());
 
         return stats;
+    }
+
+    public ParkingLot getParkingLot() {
+        return parkingService.getParkingLot();
+    }
+
+    public boolean updateSpotType(String spotId, SpotType spotType) {
+        return parkingService.updateSpotType(spotId, spotType);
     }
 }

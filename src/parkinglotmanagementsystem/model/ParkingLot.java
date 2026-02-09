@@ -43,6 +43,17 @@ public class ParkingLot {
         return availableSpots;
     }
 
+    public List<ParkingSpot> findAllSpots() {
+        List<ParkingSpot> spots = new ArrayList<>();
+        for (Floor floor : floors) {
+            for (ParkingSpot spot : floor.getSpots()) {
+                spots.add(spot);
+            }
+        }
+
+        return spots;
+    }
+
     private boolean canVehicleParkInSpot(VehicleType vehicleType, SpotType spotType) {
         switch (vehicleType) {
             case MOTORCYCLE:

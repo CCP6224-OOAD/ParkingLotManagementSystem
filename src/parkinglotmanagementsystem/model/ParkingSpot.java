@@ -73,8 +73,16 @@ public class ParkingSpot {
         return spotType;
     }
 
+    public void setSpotType(SpotType spotType) {
+        this.spotType = spotType;
+    }
+
     public double getHourlyRate() {
         return hourlyRate;
+    }
+
+    public void setHourlyRate(double hourlyRate) {
+        this.hourlyRate = hourlyRate;
     }
 
     public SpotStatus getStatus() {

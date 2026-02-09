@@ -2,18 +2,22 @@ package parkinglotmanagementsystem.service;
 
 import parkinglotmanagementsystem.dao.ParkingSpotDAO;
 import parkinglotmanagementsystem.model.*;
+import parkinglotmanagementsystem.observer.ParkingEventListener;
+import parkinglotmanagementsystem.observer.ParkingEventType;
 import parkinglotmanagementsystem.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParkingService {
 
     private ParkingSpotDAO spotDAO;
     private ParkingLot parkingLot;
+    private List<ParkingEventListener> listeners;
 
     public ParkingService() {
         this.spotDAO = new ParkingSpotDAO();
-        this.parkingLot = new ParkingLot(Constants.TOTAL_FLOORS);
+        this.listeners = new ArrayList<>();
         loadParkingLot();
     }
 
@@ -67,7 +71,8 @@ public class ParkingService {
         loadParkingLot();
     }
 
-    private void loadParkingLot() {
+    public void loadParkingLot() {
+        this.parkingLot = new ParkingLot(Constants.TOTAL_FLOORS);
         List<ParkingSpot> allSpots = spotDAO.getAllSpots();
         for (ParkingSpot spot : allSpots) {
             parkingLot.addSpot(spot);
@@ -108,6 +113,10 @@ public class ParkingService {
         return updated;
     }
 
+    public void notifyAllocateSpot() {
+        notifyListeners(ParkingEventType.VEHICLE_ENTERED, null);
+    }
+
     public boolean releaseSpot(String spotId) {
         ParkingSpot spot = spotDAO.findSpotById(spotId);
 
@@ -127,6 +136,10 @@ public class ParkingService {
         return updated;
     }
 
+    public void notifyReleaseSpot() {
+        notifyListeners(ParkingEventType.VEHICLE_EXITED, null);
+    }
+
     public ParkingSpot getSpotById(String spotId) {
         return spotDAO.findSpotById(spotId);
     }
@@ -137,6 +150,30 @@ public class ParkingService {
 
     public List<ParkingSpot> getAllSpots() {
         return spotDAO.getAllSpots();
+    }
+
+    public boolean updateSpotType(String spotId, SpotType spotType) {
+        ParkingSpot parkingSpot = getSpotById(spotId);
+        if (parkingSpot == null) {
+            System.err.println("Parking spot " + spotId + " does not exist");
+            return false;
+        }
+
+        if (parkingSpot.getStatus() != SpotStatus.AVAILABLE) {
+            System.err.println("Parking spot " + spotId + " is unavailable at this moment.");
+            return false;
+        }
+
+        parkingSpot.setSpotType(spotType);
+        parkingSpot.setHourlyRate(spotType.getHourlyRate());
+        boolean updated = spotDAO.updateSpot(parkingSpot);
+
+        if (updated) {
+            System.out.println("Parking spot " + spotId + " is updated");
+        }
+        notifyListeners(ParkingEventType.SPOT_TYPE_CHANGED, null);
+
+        return updated;
     }
 
     public ParkingLot getParkingLot() {
@@ -161,5 +198,22 @@ public class ParkingService {
         }
 
         return report.toString();
+    }
+
+    // Observer Pattern Methods 
+    public void addListener(ParkingEventListener listener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(ParkingEventListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyListeners(ParkingEventType eventType, Object eventData) {
+        for (ParkingEventListener listener : listeners) {
+            listener.onParkingEvent(eventType, eventData);
+        }
     }
 }

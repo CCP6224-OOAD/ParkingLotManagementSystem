@@ -12,6 +12,7 @@ public class MainFrame extends JFrame {
     private EntryPanel entryPanel;
     private ExitPanel exitPanel;
     private AdminPanel adminPanel;
+    private ParkingLotPanel parkingLotPanel;
     private ReportPanel reportPanel;
 
     // controllers
@@ -23,16 +24,18 @@ public class MainFrame extends JFrame {
     // services (for observer pattern)
     private FineManager fineManager;
     private PaymentService paymentService;
+    private ParkingService parkingService;
 
     public MainFrame(EntryController entryController, ExitController exitController,
             AdminController adminController, ReportController reportController,
-            FineManager fineManager, PaymentService paymentService) {
+            FineManager fineManager, PaymentService paymentService, ParkingService parkingService) {
         this.entryController = entryController;
         this.exitController = exitController;
         this.adminController = adminController;
         this.reportController = reportController;
         this.fineManager = fineManager;
         this.paymentService = paymentService;
+        this.parkingService = parkingService;
 
         initializeUI();
     }
@@ -52,6 +55,7 @@ public class MainFrame extends JFrame {
         entryPanel = new EntryPanel(entryController);
         exitPanel = new ExitPanel(exitController);
         adminPanel = new AdminPanel(adminController, reportController);
+        parkingLotPanel = new ParkingLotPanel(adminController);
         reportPanel = new ReportPanel(reportController);
 
         // register observers AFTER panel creation
@@ -60,10 +64,13 @@ public class MainFrame extends JFrame {
         paymentService.addListener(adminPanel);
         paymentService.addListener(reportPanel);
         paymentService.addListener(exitPanel);
+        parkingService.addListener(adminPanel);
+        parkingService.addListener(parkingLotPanel);
 
         tabbedPane.addTab("Vehicle Entry", entryPanel);
         tabbedPane.addTab("Vehicle Exit", exitPanel);
         tabbedPane.addTab("Admin", adminPanel);
+        tabbedPane.addTab("Parking Lot", parkingLotPanel);
         tabbedPane.addTab("Reports", reportPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -103,6 +110,7 @@ public class MainFrame extends JFrame {
         entryPanel.refresh();
         exitPanel.refresh();
         adminPanel.refresh();
+        parkingLotPanel.refresh();
         reportPanel.refresh();
         JOptionPane.showMessageDialog(this, "All panels refreshed successfully!");
     }

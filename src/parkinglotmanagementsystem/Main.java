@@ -22,27 +22,24 @@ public class Main {
             e.printStackTrace();
         }
 
-        // Launch GUI on Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> {
-            // Initialize services
-            ParkingService parkingService = new ParkingService();
-            parkingService.initializeParkingLot();
+        // Initialize services
+        ParkingService parkingService = new ParkingService();
+        parkingService.initializeParkingLot();
 
-            FineManager fineManager = new FineManager();
-            PaymentService paymentService = new PaymentService(fineManager);
+        FineManager fineManager = new FineManager();
+        PaymentService paymentService = new PaymentService(fineManager);
 
-            // Initialize controllers
-            AdminController adminController = new AdminController(fineManager, paymentService);
-            ReportController reportController = new ReportController(adminController);
-            EntryController entryController = new EntryController(fineManager);
-            ExitController exitController = new ExitController(fineManager, paymentService);
+        // Initialize controllers
+        AdminController adminController = new AdminController(parkingService, fineManager, paymentService);
+        ReportController reportController = new ReportController(adminController);
+        EntryController entryController = new EntryController(parkingService, fineManager);
+        ExitController exitController = new ExitController(parkingService, fineManager, paymentService);
 
-            // Create and show main frame
-            MainFrame frame = new MainFrame(entryController, exitController,
-                    adminController, reportController,
-                    fineManager, paymentService);
-            frame.setVisible(true);
-        });
+        // Create and show main frame
+        MainFrame frame = new MainFrame(entryController, exitController,
+                adminController, reportController,
+                fineManager, paymentService, parkingService);
+        frame.setVisible(true);
     }
 
 }

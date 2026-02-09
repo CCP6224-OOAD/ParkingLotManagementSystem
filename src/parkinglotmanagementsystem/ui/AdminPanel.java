@@ -267,18 +267,17 @@ public class AdminPanel extends JPanel implements ParkingEventListener {
     // Observer Pattern Implementation
     @Override
     public void onParkingEvent(ParkingEventType eventType, Object eventData) {
-        // Auto-refresh on relevant events
-        SwingUtilities.invokeLater(() -> {
-            switch (eventType) {
-                case FINE_GENERATED:
-                case FINE_PAID:
-                case PAYMENT_PROCESSED:
-                case REVENUE_UPDATED:
-                    refresh();
-                    break;
-                default:
-                    break;
-            }
-        });
+        switch (eventType) {
+            case FINE_GENERATED:
+            case FINE_PAID:
+            case PAYMENT_PROCESSED:
+            case REVENUE_UPDATED:
+            case VEHICLE_ENTERED:
+            case VEHICLE_EXITED:
+                refresh();
+                break;
+            default:
+                break;
+        }
     }
 }

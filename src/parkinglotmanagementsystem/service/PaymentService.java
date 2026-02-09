@@ -44,11 +44,13 @@ public class PaymentService {
 
         System.out.println("Payment processed successfully: " + payment);
 
+        return payment;
+    }
+
+    public void notifyProcessPayment(Payment payment) {
         // Notify observers
         notifyListeners(ParkingEventType.PAYMENT_PROCESSED, payment);
         notifyListeners(ParkingEventType.REVENUE_UPDATED, payment.getTotalAmount());
-
-        return payment;
     }
 
     public String generateReceipt(Payment payment, String plateNumber,

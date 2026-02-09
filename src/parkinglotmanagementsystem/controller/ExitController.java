@@ -19,11 +19,11 @@ public class ExitController {
   private BillingService billingService;
   private PaymentService paymentService;
 
-  public ExitController(FineManager fineManager, PaymentService paymentService) {
-    this.parkingService = new ParkingService();
+  public ExitController(ParkingService parkingService, FineManager fineManager, PaymentService paymentService) {
     this.vehicleService = new VehicleService();
     this.ticketService = new TicketService();
     this.billingService = new BillingService(fineManager);
+    this.parkingService = parkingService;
     this.paymentService = paymentService;
   }
 
@@ -149,6 +149,9 @@ public class ExitController {
       if (!vehicleUpdated) {
         System.err.println("Failed to update vehicle: " + vehicle.getPlateNumber());
       }
+
+      parkingService.notifyReleaseSpot();
+      paymentService.notifyProcessPayment(payment);
 
       System.out.println("=== VEHICLE EXIT SUCCESSFUL ===");
       System.out.println("Plate: " + normalizedPlate);

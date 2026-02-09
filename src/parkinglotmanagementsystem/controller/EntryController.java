@@ -14,8 +14,8 @@ public class EntryController {
   private TicketService ticketService;
   // private ReservationService reservationService;
 
-  public EntryController(FineManager fineManager) {
-    this.parkingService = new ParkingService();
+  public EntryController(ParkingService parkingService, FineManager fineManager) {
+    this.parkingService = parkingService;
     this.vehicleService = new VehicleService();
     this.ticketService = new TicketService();
     // this.reservationService = reservationService;
@@ -109,6 +109,9 @@ public class EntryController {
         System.err.println("Failed to create ticket, spot released");
         return null;
       }
+
+      parkingService.loadParkingLot();
+      parkingService.notifyAllocateSpot();
 
       System.out.println("=== VEHICLE ENTRY SUCCESSFUL ===");
       System.out.println("Plate: " + normalizedPlate);

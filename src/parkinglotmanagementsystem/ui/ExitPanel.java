@@ -162,6 +162,9 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
       return;
     }
 
+    // store temporarily due to clearForm()
+    Map<String, Object> billDetails = currentBill;
+
     // Get payment method
     PaymentMethod paymentMethod = cashRadio.isSelected() ? PaymentMethod.CASH : PaymentMethod.CARD;
 
@@ -183,8 +186,14 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
     Payment payment = exitController.processExit(plate, paymentMethod, paymentAmount);
 
     if (payment != null) {
-      // Success - generate receipt
-      String receipt = exitController.generateReceipt(payment, currentBill);
+
+      String receipt = exitController.generateReceipt(payment, billDetails);
+
+      // Clear form
+      clearForm();
+
+      // Generate the exit receipt
+      billArea.setText(receipt);
 
       JOptionPane.showMessageDialog(this,
           String.format("Payment successful!\nTotal Paid: RM %.2f\nThank you!",
@@ -192,11 +201,6 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
           "Payment Successful",
           JOptionPane.INFORMATION_MESSAGE);
 
-      // Clear form
-      clearForm();
-
-      // Generate the exit receipt
-      billArea.setText(receipt);
     } else {
       billArea.setText("Payment processing failed. Please try again.");
       JOptionPane.showMessageDialog(this,
@@ -222,10 +226,8 @@ public class ExitPanel extends JPanel implements ParkingEventListener {
   // Observer Pattern Implementation
   @Override
   public void onParkingEvent(ParkingEventType eventType, Object eventData) {
-    SwingUtilities.invokeLater(() -> {
-      if (eventType == ParkingEventType.PAYMENT_PROCESSED) {
-        clearForm();
-      }
-    });
+    if (eventType == ParkingEventType.PAYMENT_PROCESSED) {
+      clearForm();
+    }
   }
 }

@@ -42,6 +42,32 @@ public class ParkingSpotDAO {
         }
     }
 
+    public boolean updateSpot(ParkingSpot spot) {
+        String sql = """
+                    UPDATE parking_spots
+                    SET floor_number = ?, row_number = ?, spot_number = ?, spot_type = ?, hourly_rate = ?, is_occupied = ?, current_plate = ?
+                    WHERE spot_id = ?;
+                """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, spot.getFloorNumber());
+            pstmt.setInt(2, spot.getRowNumber());
+            pstmt.setInt(3, spot.getSpotNumber());
+            pstmt.setString(4, spot.getSpotType().name());
+            pstmt.setDouble(5, spot.getHourlyRate());
+            pstmt.setInt(6, spot.getStatus() == SpotStatus.OCCUPIED ? 1 : 0);
+            pstmt.setString(7, spot.getCurrentPlate());
+            pstmt.setString(8, spot.getSpotId());
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Failed to update spot: " + spot.getSpotId());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean updateSpotStatus(String spotId, SpotStatus status, String plateNumber) {
         String sql = """
                     UPDATE parking_spots

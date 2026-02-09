@@ -175,23 +175,21 @@ public class ReportPanel extends JPanel implements ParkingEventListener {
     // Observer Pattern Implementation
     @Override
     public void onParkingEvent(ParkingEventType eventType, Object eventData) {
-        SwingUtilities.invokeLater(() -> {
-            switch (eventType) {
-                case VEHICLE_ENTERED:
-                case VEHICLE_EXITED:
-                case FINE_GENERATED:
-                case FINE_PAID:
-                case PAYMENT_PROCESSED:
-                case REVENUE_UPDATED:
-                    String currentText = reportArea.getText();
-                    if (!currentText.isEmpty() &&
-                            !currentText.equals("Select a report type and click 'Generate Report' to view.")) {
-                        refresh();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
+        switch (eventType) {
+            case VEHICLE_ENTERED:
+            case VEHICLE_EXITED:
+            case FINE_GENERATED:
+            case FINE_PAID:
+            case PAYMENT_PROCESSED:
+            case REVENUE_UPDATED:
+                String currentText = reportArea.getText();
+                if (!currentText.isEmpty() &&
+                        !currentText.equals("Select a report type and click 'Generate Report' to view.")) {
+                    refresh();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

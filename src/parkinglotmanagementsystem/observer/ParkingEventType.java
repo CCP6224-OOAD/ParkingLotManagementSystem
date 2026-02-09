@@ -8,5 +8,6 @@ public enum ParkingEventType {
     PAYMENT_PROCESSED, // Payment transaction completed
     REVENUE_UPDATED, // Total revenue changed
     SPOT_STATUS_CHANGED, // Parking spot became available/occupied
+    SPOT_TYPE_CHANGED, // Parking spot type is changed
     OCCUPANCY_CHANGED // Overall occupancy rate changed
 }
