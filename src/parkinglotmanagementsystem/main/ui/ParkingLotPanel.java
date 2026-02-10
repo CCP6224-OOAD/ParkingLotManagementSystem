@@ -52,7 +52,7 @@ public class ParkingLotPanel extends JPanel implements ParkingEventListener {
 
   private JPanel createTablePanel() {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createTitledBorder("Available Parking Spots"));
+    panel.setBorder(BorderFactory.createTitledBorder("Parking Spots"));
 
     String[] columns = { "Spot ID", "Floor", "Type", "Rate (RM/hr)", "Status", "Plate Number" };
     spotsTableModel = new DefaultTableModel(columns, 0) {

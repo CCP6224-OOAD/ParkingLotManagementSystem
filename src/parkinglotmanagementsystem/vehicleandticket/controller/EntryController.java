@@ -1,6 +1,5 @@
 package parkinglotmanagementsystem.vehicleandticket.controller;
 
-import parkinglotmanagementsystem.fineandpayment.service.*;
 import parkinglotmanagementsystem.main.util.PlateValidator;
 import parkinglotmanagementsystem.main.util.TimeUtil;
 import parkinglotmanagementsystem.parking.model.ParkingSpot;
@@ -20,7 +19,7 @@ public class EntryController {
   private VehicleService vehicleService;
   private TicketService ticketService;
 
-  public EntryController(ParkingService parkingService, FineManager fineManager) {
+  public EntryController(ParkingService parkingService) {
     this.parkingService = parkingService;
     this.vehicleService = new VehicleService();
     this.ticketService = new TicketService();

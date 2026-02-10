@@ -8,8 +8,6 @@ import parkinglotmanagementsystem.report.controller.ReportController;
 import parkinglotmanagementsystem.vehicleandticket.controller.EntryController;
 import parkinglotmanagementsystem.vehicleandticket.controller.ExitController;
 
-import javax.swing.*;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -18,13 +16,6 @@ public class Main {
         System.out.println("=".repeat(60));
         System.out.println("Launching graphical user interface...");
         System.out.println();
-
-        // Set look and feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         // Initialize services
         ParkingService parkingService = new ParkingService();
@@ -36,7 +27,7 @@ public class Main {
         // Initialize controllers
         AdminController adminController = new AdminController(parkingService, fineManager, paymentService);
         ReportController reportController = new ReportController(adminController);
-        EntryController entryController = new EntryController(parkingService, fineManager);
+        EntryController entryController = new EntryController(parkingService);
         ExitController exitController = new ExitController(parkingService, fineManager, paymentService);
 
         // Create and show main frame
